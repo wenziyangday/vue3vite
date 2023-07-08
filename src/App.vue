@@ -2,6 +2,8 @@
 import HelloWorld from './components/HelloWorld.vue';
 import ScriptNotSetUp from "./components/ScriptNotSetUp.vue";
 import ReactiveCom from './study/Reactive.vue';
+const env = import.meta.env;
+console.log(env, 'env')
 </script>
 
 <template>
