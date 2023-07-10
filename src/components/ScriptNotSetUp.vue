@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: "ScriptNotSetUp",
+  name: 'ScriptNotSetUp',
   props: {
     msg: {
       type: String
@@ -9,13 +9,11 @@ export default {
   setup() {
     return {};
   }
-}
+};
 </script>
 
 <template>
   <div>{{ msg }}</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

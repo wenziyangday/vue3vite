@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue';
 import ScriptNotSetUp from './components/ScriptNotSetUp.vue';
-import ReactiveCom from './study/Reactive.vue';
+import ReactiveCom from './study/ReactiveFun.vue';
 
 const env = import.meta.env;
 console.log(env, 'env');

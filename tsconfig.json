@@ -12,8 +12,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"]
   },
-  "include": ["*.ts", "*.d.ts", "src/**/*.tsx", "src/**/*.vue",
-    ".eslintrc.cjs", "vite.config.ts"],
+  "include": ["**/*.vue", "**/*.ts", "**/*.d.ts", "**/*.js", "**/*.jsx", "**/*.tsx"],
   "exclude": ["node_modules", ".vscode"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -7,10 +7,10 @@ const reactData = reactive({
   arr: [1, 2, 3, 4]
 });
 
-void function increaseNum() {
+function increaseNum(): any {
   console.log(refNum, 'ref');
   refNum.value++;
-};
+}
 
 void function randomName() {
   reactData.name = Math.random();
@@ -24,7 +24,6 @@ void function randomName() {
 const computeName = computed(() => {
   return Number(reactData.name) > 0 ? reactData.name : '我是一个计算属性';
 });
-
 const computeArr10 = computed(() => {
   return reactData.arr[10] > 800 ? reactData.arr[10] : '我是一个计算数组数据';
 });
