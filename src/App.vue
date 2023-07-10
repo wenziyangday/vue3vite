@@ -5,7 +5,6 @@ import ReactiveCom from './study/Reactive.vue'
 
 const env = import.meta.env
 console.log(env, 'env')
-const aa = 1111
 </script>
 
 <template>
