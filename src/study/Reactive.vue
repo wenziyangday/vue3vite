@@ -7,19 +7,19 @@ const reactData = reactive({
   arr: [1, 2, 3, 4]
 });
 
-function increaseNum() {
+void function increaseNum() {
   console.log(refNum, 'ref');
   refNum.value++;
-}
+};
 
-function randomName() {
+void function randomName() {
   reactData.name = Math.random();
   console.log(reactData);
-  nextTick(() => {
+  void nextTick(() => {
     console.log('我执行了nextTick');
   });
   reactData.arr[10] = Math.random() * 1000;
-}
+};
 
 const computeName = computed(() => {
   return Number(reactData.name) > 0 ? reactData.name : '我是一个计算属性';
