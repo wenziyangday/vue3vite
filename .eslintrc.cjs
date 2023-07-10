@@ -5,15 +5,16 @@ module.exports = {
   },
   extends: [
     'standard-with-typescript',
-    'plugin:vue/vue3-essential'
+    'plugin:vue/vue3-essential',
+    "plugin:prettier/recommended",
   ],
   overrides: [
     {
-      env: { node: true },
+      env: {node: true},
       files: [
         '.eslintrc.{js,cjs}'
       ],
-      parserOptions: { sourceType: 'script' }
+      parserOptions: {sourceType: 'script'}
     }
   ],
   parserOptions: {
@@ -27,5 +28,7 @@ module.exports = {
   plugins: [
     'vue'
   ],
-  rules: {}
+  rules: {
+    "no-console": "off"
+  }
 }

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {ref, reactive, nextTick, computed, watch} from 'vue';
+import { ref, reactive, nextTick, computed, watch } from 'vue';
 
-let refNum: any = ref(0);
-let reactData = reactive({
+const refNum: any = ref(0);
+const reactData = reactive({
   name: '老张',
   arr: [1, 2, 3, 4]
 });
 
 function increaseNum() {
-  console.log(refNum, 'ref')
+  console.log(refNum, 'ref');
   refNum.value++;
 }
 
@@ -22,21 +22,25 @@ function randomName() {
 }
 
 const computeName = computed(() => {
-  return Number(reactData.name) > 0 ? reactData.name : '我是一个计算属性'
+  return Number(reactData.name) > 0 ? reactData.name : '我是一个计算属性';
 });
 
 const computeArr10 = computed(() => {
-  return reactData.arr[10] > 800 ? reactData.arr[10] : '我是一个计算数组数据'
+  return reactData.arr[10] > 800 ? reactData.arr[10] : '我是一个计算数组数据';
 });
 
-watch(() => reactData.name, (newVal, oldVal) => {
-  console.log(newVal, oldVal);
-}, {immediate: true})
-
+watch(
+  () => reactData.name,
+  (newVal, oldVal) => {
+    console.log(newVal, oldVal);
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <div class="reactive"> 这是一个响应数据 ref {{ refNum }}
+  <div class="reactive">
+    这是一个响应数据 ref {{ refNum }}
     <button @click="increaseNum">点击</button>
   </div>
 
@@ -47,11 +51,10 @@ watch(() => reactData.name, (newVal, oldVal) => {
     <div>我是一个计算属性: {{ computeName }}</div>
 
     <div>
-      这是一个更深层次的响应： {{ reactData.arr[10] }} 计算数据： {{ computeArr10 }}
+      这是一个更深层次的响应： {{ reactData.arr[10] }} 计算数据：
+      {{ computeArr10 }}
     </div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
