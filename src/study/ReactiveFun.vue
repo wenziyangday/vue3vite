@@ -2,7 +2,7 @@
 import { ref, reactive, nextTick, computed, watch } from 'vue';
 
 const refNum: any = ref(0);
-const reactData = reactive({
+const reactData: any = reactive({
   name: '老张',
   arr: [1, 2, 3, 4]
 });
