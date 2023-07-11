@@ -171,7 +171,7 @@ module.exports = {
     //  去掉小数点前面的 0
     "number-leading-zero": "never",
     //  使用双引号
-    "string-quotes": "double",
+    "string-quotes": "single",
     //  每个属性声明末尾都要加分号
     // "declaration-block-trailing-semicolon": "always",
     //  属性值 0 后面不加单位

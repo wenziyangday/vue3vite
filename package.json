@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint:css": "stylelint --aei *.css,*.less --fix src/"
+    "eslint:fix": "eslint --ext .tsx,.ts,.vue src",
+    "prettier:fix": "prettier --write './**/*.{js,ts,vue,css,less,scss,json}'",
+    "stylelint:fix": "stylelint --aei *.css,*.less --fix src/"
   },
   "dependencies": {
     "ant-design-vue": "^2.2.8",
