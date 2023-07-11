@@ -42,7 +42,6 @@ watch(
     这是一个响应数据 ref {{ refNum }}
     <button @click="increaseNum">点击</button>
   </div>
-
   <div class="reactive">
     这也是一个响应数据 reactive {{ reactData.name }}
     <button @click="randomName">点击更换name</button>
@@ -56,4 +55,6 @@ watch(
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@import url("index.css");
+</style>

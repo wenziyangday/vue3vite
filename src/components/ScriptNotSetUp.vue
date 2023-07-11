@@ -15,5 +15,3 @@ export default {
 <template>
   <div>{{ msg }}</div>
 </template>
-
-<style scoped></style>

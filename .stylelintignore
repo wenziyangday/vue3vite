@@ -1,0 +1,15 @@
+# IntelliJ project files
+.idea
+/dist/*
+/public/*
+
+*.ts
+**/*.ts
+**/*.json
+**/*.png
+**/*.jpeg
+**/*.eot
+**/*.ttf
+**/*.woff
+**/*.svg
+.eslintignore
