@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick, computed, watch } from 'vue';
+import { getCodeImg } from '@/apis/login';
 
 const refNum: any = ref(0);
 const reactData: any = reactive({
@@ -10,6 +11,13 @@ const reactData: any = reactive({
 function increaseNum(): any {
   console.log(refNum, 'ref');
   refNum.value++;
+  getCodeImg()
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 void function randomName() {
