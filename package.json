@@ -2,6 +2,11 @@
   "name": "vue3vite",
   "private": true,
   "version": "1.0.0",
+  "author": {
+    "name": "vincent",
+    "email": "wenziyangday@gmail.com"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
