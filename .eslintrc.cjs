@@ -29,6 +29,8 @@ module.exports = {
     'vue'
   ],
   rules: {
-    "no-console": "off"
+    "@typescript-eslint/return-await": "off",
+    "no-console": "off",
+    "no-return-await": 0
   }
 }
