@@ -26,11 +26,17 @@ module.exports = {
     extraFileExtensions: ['.vue']
   },
   plugins: [
-    'vue'
+    'vue',
+    'eslint-plugin-simple-import-sort'
   ],
   rules: {
     "@typescript-eslint/return-await": "off",
     "no-console": "off",
-    "no-return-await": 0
+    "no-return-await": 0,
+    // 设置import排序规则
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "sort-imports": "off",
+    "import/order": "off",
   }
 }
