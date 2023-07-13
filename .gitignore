@@ -22,6 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
+.husky/
 # lock文件
 pnpm-lock.yaml
