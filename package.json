@@ -11,14 +11,15 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "eslint:fix": "eslint --ext .tsx,.ts,.vue src",
-    "prettier:fix": "prettier --write './**/*.{js,ts,vue,css,less,scss,json}'",
+    "eslint:fix": "eslint --ext .tsx,.ts,.js,.cjs,.vue src",
+    "prettier:fix": "prettier --write './**/*.{js,cjs,ts,vue,css,less,scss,json}'",
     "stylelint:fix": "stylelint --aei *.css,*.less --fix src/",
     "husky:prepare": "npx husky install && npx husky add .husky/pre-commit \"pnpm lint-staged\" && npx husky add .husky/commit-msg 'npx --no-install commitlint --edit \"$1\"'"
   },
   "dependencies": {
     "ant-design-vue": "^2.2.8",
     "axios": "^0.26.1",
+    "pinia": "^2.1.4",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14"
   },

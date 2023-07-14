@@ -12,13 +12,9 @@ const reactData: any = reactive({
 function increaseNum(): any {
   console.log(refNum, 'ref');
   refNum.value++;
-  getCodeImg()
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  getCodeImg().then((res) => {
+    console.log(res);
+  });
 }
 
 void function randomName() {

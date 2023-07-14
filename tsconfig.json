@@ -13,14 +13,20 @@
     "lib": ["esnext", "dom"]
   },
   "include": [
+    ".eslintrc.cjs",
     "**/*.vue",
     "**/*.ts",
     "**/*.d.ts",
     "**/*.js",
+    "**/*.cjs",
     "**/*.jsx",
     "**/*.tsx"
   ],
   "exclude": ["node_modules", ".vscode"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
   "extends": "./alias.json"
 }

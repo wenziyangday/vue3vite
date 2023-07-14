@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-export async function login(userName, password, code, uuid): Promise<T> {
+export function login(userName, password, code, uuid): Promise {
   return request({
     url: '/auth/login',
     headers: {
@@ -14,7 +14,7 @@ export async function login(userName, password, code, uuid): Promise<T> {
 /**
  * 获取验证码
  * */
-export async function getCodeImg(): Promise<T> {
+export function getCodeImg(): Promise {
   return request({
     url: '/captchaImage',
     headers: {

@@ -16,7 +16,7 @@ service.interceptors.request.use(
     console.log(config, config.baseURL, '121232');
     return config;
   },
-  async function (error: AxiosError) {
+  function (error: AxiosError) {
     return Promise.reject(error);
   }
 );
@@ -25,7 +25,7 @@ service.interceptors.response.use(
   function (response: AxiosResponse) {
     return response;
   },
-  async function (error: AxiosError) {
+  function (error: AxiosError) {
     return Promise.reject(error);
   }
 );

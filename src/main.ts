@@ -12,7 +12,7 @@ const app = createApp(App);
 /** 注册全局组件 */
 app.component('my-btn', MyBtn);
 
-/** 全局监听报错 */
+/** 注册全局组件 */
 app.config.errorHandler = function (err, instance, info) {
   console.log(err, instance, info);
 };
