@@ -1,6 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
-import postCssPxToViewport from 'postcss-px-to-viewport';
+import postCssPxToViewport from 'postcss-px-to-viewport-8-plugin';
 import { defineConfig, loadEnv } from 'vite';
 import eslintPlugin from 'vite-plugin-eslint';
 
