@@ -1,8 +1,11 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
-import MyBtn from './components/MyButton.vue';
+
+import Antd from 'ant-design-vue';
+import { createApp } from 'vue';
+
+import App from '@/App.vue';
+import MyBtn from '@/components/MyButton.vue';
+import router from '@/router';
 
 const app = createApp(App);
 
@@ -14,4 +17,4 @@ app.config.errorHandler = function (err, instance, info) {
   console.log(err, instance, info);
 };
 
-app.use(Antd).mount('#app');
+app.use(router).use(Antd).mount('#app');

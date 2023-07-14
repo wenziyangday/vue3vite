@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {
   onBeforeMount,
-  onMounted,
-  onBeforeUpdate,
-  onUpdated,
   onBeforeUnmount,
-  onUnmounted
+  onBeforeUpdate,
+  onMounted,
+  onUnmounted,
+  onUpdated
 } from 'vue';
 
 defineProps<{ msg: string }>();

@@ -31,6 +31,7 @@ module.exports = {
   ],
   rules: {
     "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/promise-function-async": "off",
     "no-console": "off",
     "no-return-await": 0,
     // 设置import排序规则
@@ -38,5 +39,6 @@ module.exports = {
     "simple-import-sort/exports": "error",
     "sort-imports": "off",
     "import/order": "off",
+    "vue/multi-word-component-names": "off",
   }
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, reactive, nextTick, computed, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
+
 import { getCodeImg } from '@/apis/login';
 
 const refNum: any = ref(0);
@@ -57,7 +58,7 @@ watch(
     <div>我是一个计算属性: {{ computeName }}</div>
 
     <div>
-      这是一个更深层次的响应： {{ reactData.arr[10] }} 计算数据：
+      <!--      这是一个更深层次的响应： {{ reactData.arr[10] }} 计算数据：-->
       {{ computeArr10 }}
     </div>
   </div>
