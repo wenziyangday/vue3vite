@@ -7,6 +7,10 @@ const routes = [
     text: '首页'
   },
   {
+    path: '/shop',
+    text: '商店'
+  },
+  {
     path: '/login',
     text: '登录'
   },
@@ -16,11 +20,13 @@ const routes = [
   }
 ];
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const routerClick = async (event) => {
+/**
+ * 路由点击跳转
+ * */
+const routerClick = (event): void => {
   const { path } = event.target.dataset;
   if (path) {
-    await router.push(path);
+    void router.push(path);
   }
 };
 </script>

@@ -12,6 +12,10 @@ const routes = [
   {
     path: '/register',
     component: () => import('@/views/register')
+  },
+  {
+    path: '/shop',
+    component: () => import('@/views/shop')
   }
 ];
 const router = createRouter({
