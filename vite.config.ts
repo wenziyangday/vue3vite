@@ -1,7 +1,7 @@
-import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import eslintPlugin from 'vite-plugin-eslint';
 import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
+import eslintPlugin from 'vite-plugin-eslint';
 
 // https://vitejs.dev/config/
 export default ({ mode }): any => {
@@ -40,12 +40,24 @@ export default ({ mode }): any => {
     // 项目部署在主域名的子文件使用,例如http://localhost:3000/myvite/。不填默认就是/
     base: env.VITE_APP_BASE_URL ?? '/',
     resolve: {
+      // 文件目录别名
       alias: [
         {
           find: '@',
           replacement: path.resolve(__dirname, 'src')
         },
         { find: /^~/, replacement: '' }
+      ],
+      // 扩展名导入忽略
+      extensions: [
+        '.mjs',
+        '.cjs',
+        '.js',
+        '.ts',
+        '.jsx',
+        '.tsx',
+        '.json',
+        '.vue'
       ]
     }
   });
