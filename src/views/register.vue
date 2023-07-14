@@ -8,6 +8,6 @@ const str: string = 'name';
 
 <style scoped>
 .register {
-  background: aquamarines;
+  background: aquamarine;
 }
 </style>
