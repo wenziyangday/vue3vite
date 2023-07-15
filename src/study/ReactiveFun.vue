@@ -25,7 +25,6 @@ void function randomName() {
   });
   reactData.arr[10] = Math.random() * 1000;
 };
-
 const computeName = computed(() => {
   return Number(reactData.name) > 0 ? reactData.name : '我是一个计算属性';
 });

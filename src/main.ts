@@ -1,4 +1,4 @@
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/reset.css';
 
 import Antd from 'ant-design-vue';
 import { createPinia } from 'pinia';
@@ -19,4 +19,4 @@ app.config.errorHandler = function (err, instance, info) {
   console.log(err, instance, info);
 };
 
-app.use(router).use(Antd).use(pinia).mount('#app');
+app.use(router).use(pinia).use(Antd).mount('#app');

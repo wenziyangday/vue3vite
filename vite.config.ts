@@ -1,9 +1,13 @@
 import vue from '@vitejs/plugin-vue';
+import { theme } from 'ant-design-vue';
 import path from 'path';
 import postCssPxToViewport from 'postcss-px-to-viewport-8-plugin';
 import { defineConfig, loadEnv } from 'vite';
 import eslintPlugin from 'vite-plugin-eslint';
 
+// 设置antDesign主题
+const { defaultAlgorithm, defaultSeed } = theme;
+const mapToken = defaultAlgorithm(defaultSeed);
 // https://vitejs.dev/config/
 export default ({ mode }): any => {
   // 参数mode为开放模式或生产模式
@@ -13,6 +17,11 @@ export default ({ mode }): any => {
     // 项目部署在主域名的子文件使用,例如http://localhost:3000/myvite/。不填默认就是/
     base: env.VITE_APP_BASE_URL ?? '/',
     css: {
+      preprocessorOptions: {
+        less: {
+          modifyVars: mapToken
+        }
+      },
       postcss: {
         plugins: [
           // 响应式

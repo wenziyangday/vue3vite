@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
+const data = reactive({
+  colorPrimary: '#ff17ef',
+  fontSize: 12,
+  borderRadius: 4
+});
 const router = useRouter();
 const routes = [
   {
@@ -19,7 +25,6 @@ const routes = [
     text: '注册'
   }
 ];
-
 /**
  * 路由点击跳转
  * */
@@ -32,17 +37,30 @@ const routerClick = (event): void => {
 </script>
 
 <template>
-  <div class="link" @click="routerClick">
-    <div
-      class="item"
-      v-for="item in routes"
-      :key="item.path"
-      :data-path="item.path"
-    >
-      {{ item.text }}
-    </div>
-  </div>
-  <router-view></router-view>
+  <a-config-provider
+    :theme="{
+      token: data
+    }"
+  >
+    <a-watermark content="vincent wen">
+      <div class="link" @click="routerClick">
+        <div
+          class="item"
+          v-for="item in routes"
+          :key="item.path"
+          :data-path="item.path"
+        >
+          {{ item.text }}
+        </div>
+        <input
+          type="color"
+          :value="data.colorPrimary"
+          @input="(e) => (data.colorPrimary = e.target.value)"
+        />
+      </div>
+      <router-view></router-view>
+    </a-watermark>
+  </a-config-provider>
 </template>
 
 <style scoped>

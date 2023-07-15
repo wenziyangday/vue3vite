@@ -8,7 +8,6 @@ const data: any = { name: '张三' };
 
 <style scoped>
 .login {
-  font-size: 20px;
   background: aliceblue;
 }
 </style>

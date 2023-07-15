@@ -17,7 +17,7 @@
     "husky:prepare": "npx husky install && npx husky add .husky/pre-commit \"pnpm lint-staged\" && npx husky add .husky/commit-msg 'npx --no-install commitlint --edit \"$1\"'"
   },
   "dependencies": {
-    "ant-design-vue": "^2.2.8",
+    "ant-design-vue": "^4.0.0",
     "axios": "^0.26.1",
     "pinia": "^2.1.4",
     "vue": "^3.2.25",
