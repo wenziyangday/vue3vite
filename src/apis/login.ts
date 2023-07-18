@@ -1,6 +1,11 @@
 import request from '@/utils/request';
 
-export function login(userName, password, code, uuid): Promise {
+export function login(
+  userName: string,
+  password: string,
+  code: string,
+  uuid: string
+): Promise {
   return request({
     url: '/auth/login',
     headers: {
@@ -22,5 +27,25 @@ export function getCodeImg(): Promise {
     },
     method: 'get',
     timeout: 20000
+  });
+}
+
+/**
+ * 获取用户详细信息
+ * */
+export function getInfo(): Promise {
+  return request({
+    url: '/system/user/getInfo',
+    method: 'get'
+  });
+}
+
+/**
+ * 退出方法
+ * */
+export function logout(): Promise {
+  return request({
+    url: '/auth/logout',
+    method: 'delete'
   });
 }

@@ -70,7 +70,8 @@ module.exports = {
     'dot-notation': [
       'error',
       {
-        allowKeywords: false,
+        // 保留关键字做属性 只能使用.方式取属性
+        allowKeywords: true,
         allowPattern: ''
       }
     ], // 获取对象属性的时候使用点号

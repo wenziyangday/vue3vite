@@ -63,7 +63,7 @@ service.interceptors.request.use(
 
       const requestObjFromSession = getSItem(constants.repeatSubmit);
 
-      if (requestObjFromSession) {
+      if (!requestObjFromSession) {
         setSItem(constants.repeatSubmit, requestObj);
       } else {
         const sUrl: string = requestObjFromSession.url; // 请求地址
@@ -109,7 +109,7 @@ service.interceptors.response.use(
         isReLogin.show = true;
 
         Modal.confirm({
-          title: '系统提示?',
+          title: '系统提示',
           content: '登录状态已过期，您可以继续留在该页面，或者重新登录',
           cancelText: '取消',
           okText: '确定',

@@ -5,12 +5,20 @@ export const getToken = (): string => {
   return getItem(constants.token);
 };
 
+export const setToken = (val: string): string => {
+  return getItem(constants.token, val);
+};
+
 export const removeToken = (): void => {
   removeItem(constants.token);
 };
 
 export const getSToken = (): string => {
   return getSItem(constants.token);
+};
+
+export const setSToken = (val: string): string => {
+  return getSItem(constants.token, val);
 };
 
 export const removeSToken = (): void => {
