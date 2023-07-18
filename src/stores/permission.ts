@@ -4,6 +4,7 @@ import { getRouters } from '@/apis/menu';
 import InnerLink from '@/components/inner-link/InnerLink.vue';
 import ParentView from '@/components/parent-view/ParentView.vue';
 import auth from '@/plugins/auth';
+import router, { constantRoutes, dynamicRoutes } from '@/router';
 import Layout from '@/views/layout.vue';
 
 export const usePermission = defineStore('permission', {
@@ -24,8 +25,18 @@ export const usePermission = defineStore('permission', {
             const sData = JSON.parse(JSON.stringify(res.data));
             const rData = JSON.parse(JSON.stringify(res.data));
             const sidebarRoutes = filterAsync(sData);
-            console.log(rData, sData, sidebarRoutes);
-            resolve(res);
+            const rewriteRoutes = filterAsync(rData, false, true);
+            const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
+            router.addRoute(asyncRoutes);
+
+            rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true });
+            this.addRoutes = rewriteRoutes;
+            this.routes = constantRoutes.concat(rewriteRoutes);
+            this.sidebarRouters = constantRoutes.concat(sidebarRoutes);
+            this.defaultRoutes = constantRoutes.concat(sidebarRoutes);
+            this.topBarRouters = sidebarRoutes;
+
+            resolve(rewriteRoutes);
           })
           .catch((err) => {
             reject(err);

@@ -2,8 +2,7 @@ import { store } from '@/stores/store';
 import { useUser } from '@/stores/user';
 
 const user = useUser(store);
-// todo 此处会出现变量提升问题
-const permissionInfo = [];
+const permissionInfo = user.permissions;
 
 function authPermission(permission): boolean {
   const allPermission = '*:*:*';
