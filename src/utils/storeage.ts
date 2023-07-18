@@ -9,7 +9,6 @@ export const getItem = (key: string): any => {
 
 export const setItem = (key: string, data: any): void => {
   let val: string = data;
-  console.log(data, 'data');
   if (typeof data !== 'string') {
     val = JSON.stringify(data);
   }

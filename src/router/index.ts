@@ -67,7 +67,6 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' });
       NProgress.done();
     } else {
-      console.log(user.roles, 'user.roles');
       if (user.roles.length === 0) {
         isReLogin.show = true;
         // 拉取用户信息
@@ -96,10 +95,8 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (whiteList?.includes(to.path)) {
-      console.log('to.path', to.path);
       next();
     } else {
-      console.log('login');
       next(`/login?redirect=${to.fullPath}`);
       NProgress.done();
     }

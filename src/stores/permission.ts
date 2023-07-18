@@ -7,6 +7,9 @@ import auth from '@/plugins/auth';
 import router, { constantRoutes, dynamicRoutes } from '@/router';
 import Layout from '@/views/layout.vue';
 
+/**
+ * 路由权限认证
+ * */
 export const usePermission = defineStore('permission', {
   state: () => {
     return {
