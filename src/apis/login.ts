@@ -1,18 +1,18 @@
 import request from '@/utils/request';
 
 export function login(
-  userName: string,
+  username: string,
   password: string,
   code: string,
   uuid: string
 ): Promise {
   return request({
-    url: '/auth/login',
+    url: '/login',
     headers: {
       isToken: false
     },
     method: 'post',
-    data: { userName, password, code, uuid }
+    data: { username, password, code, uuid }
   });
 }
 
@@ -35,7 +35,7 @@ export function getCodeImg(): Promise {
  * */
 export function getInfo(): Promise {
   return request({
-    url: '/system/user/getInfo',
+    url: '/getInfo',
     method: 'get'
   });
 }
@@ -45,7 +45,7 @@ export function getInfo(): Promise {
  * */
 export function logout(): Promise {
   return request({
-    url: '/auth/logout',
+    url: '/logout',
     method: 'delete'
   });
 }

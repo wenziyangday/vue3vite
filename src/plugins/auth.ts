@@ -1,10 +1,9 @@
 import { store } from '@/stores/store';
-import { useUPermission } from '@/stores/uPermissions';
 import { useUser } from '@/stores/user';
 
 const user = useUser(store);
-console.log(user, 'user', useUPermission());
-const permissionInfo = {};
+// todo 此处会出现变量提升问题
+const permissionInfo = [];
 
 function authPermission(permission): boolean {
   const allPermission = '*:*:*';
@@ -51,7 +50,7 @@ export default {
     return authRole(role);
   },
   // 验证用户是否含有指定角色，只需包含其中一个
-  hasRoleOr(roles) {
+  hasPermiOrhasRoleOr(roles) {
     return roles.some((item) => {
       return authRole(item);
     });

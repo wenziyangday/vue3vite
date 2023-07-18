@@ -1,15 +1,15 @@
 export const getItem = (key: string): any => {
   const val: string = localStorage.getItem(key);
   try {
-    JSON.parse(val);
-    return val;
-  } catch (e) {
     return JSON.parse(val);
+  } catch (e) {
+    return val;
   }
 };
 
 export const setItem = (key: string, data: any): void => {
   let val: string = data;
+  console.log(data, 'data');
   if (typeof data !== 'string') {
     val = JSON.stringify(data);
   }
@@ -27,10 +27,9 @@ export const clearStorage = (): void => {
 export const getSItem = (key: string): any => {
   const val: string = sessionStorage.getItem(key);
   try {
-    JSON.parse(val);
-    return val;
-  } catch (e) {
     return JSON.parse(val);
+  } catch (e) {
+    return val;
   }
 };
 

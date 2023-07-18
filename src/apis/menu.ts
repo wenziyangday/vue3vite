@@ -5,7 +5,7 @@ import request from '@/utils/request';
  * */
 export function getRouters(): Promise {
   return request({
-    url: '/system/menu/getRouters',
+    url: '/getRouters',
     method: 'get'
   });
 }

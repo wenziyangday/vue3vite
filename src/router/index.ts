@@ -3,7 +3,7 @@ import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import { useUPermission } from '@/stores/uPermissions';
+import { usePermission } from '@/stores/permission';
 import { useUser } from '@/stores/user';
 import { isReLogin } from '@/utils/request';
 import { getToken } from '@/utils/token';
@@ -60,13 +60,14 @@ const whiteList: string[] = ['/login', '/auth-redirect', '/bind', '/register'];
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  const permission = useUPermission();
+  const permission = usePermission();
   const user = useUser();
   if (getToken()) {
     if (to.path === '/login') {
       next({ path: '/' });
       NProgress.done();
     } else {
+      console.log(user.roles, 'user.roles');
       if (user.roles.length === 0) {
         isReLogin.show = true;
         // 拉取用户信息
@@ -95,8 +96,10 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (whiteList?.includes(to.path)) {
+      console.log('to.path', to.path);
       next();
     } else {
+      console.log('login');
       next(`/login?redirect=${to.fullPath}`);
       NProgress.done();
     }

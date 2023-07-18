@@ -75,13 +75,15 @@ const formState = reactive<UserInfoForm>({
   uuid: ''
 });
 
+// 路由文件
+const router = useRouter();
+
 const onFinish = (values: any): void => {
   buttonLoading.value = true;
   const user = useUser();
   user
     .loginACT({ ...formState, ...values })
     .then(() => {
-      const router = useRouter();
       void router.push(redirect.value ?? '/');
     })
     .catch(() => {

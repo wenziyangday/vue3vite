@@ -29,10 +29,9 @@ export const useUser = defineStore('user', {
         const { uuid, code, username, password } = userInfo;
         login(username, password, code, uuid)
           .then((res) => {
-            const { data } = res;
-            setToken(data.access_token);
-            this.token = data.access_token;
-            this.expiresIn = data.time;
+            const { token } = res;
+            setToken(token);
+            this.token = token;
             resolve();
           })
           .catch((err) => {
@@ -49,12 +48,11 @@ export const useUser = defineStore('user', {
         getInfo()
           .then((res) => {
             const {
-              user: { userName },
-              avatar,
+              user: { userName, avatar },
               roles,
               permissions
             } = res;
-            this.avatar = avatar ?? require('@/assets/images/profile.jpg');
+            this.avatar = avatar ?? require('@/assets/logo.png');
             this.name = userName;
             if (roles && roles.length > 0) {
               this.roles = roles;

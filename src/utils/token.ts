@@ -1,12 +1,19 @@
 import constants from '@/constants/constants';
-import { getItem, getSItem, removeItem, removeSItem } from '@/utils/storeage';
+import {
+  getItem,
+  getSItem,
+  removeItem,
+  removeSItem,
+  setItem,
+  setSItem
+} from '@/utils/storeage';
 
 export const getToken = (): string => {
   return getItem(constants.token);
 };
 
 export const setToken = (val: string): string => {
-  return getItem(constants.token, val);
+  setItem(constants.token, val);
 };
 
 export const removeToken = (): void => {
@@ -18,7 +25,7 @@ export const getSToken = (): string => {
 };
 
 export const setSToken = (val: string): string => {
-  return getSItem(constants.token, val);
+  setSItem(constants.token, val);
 };
 
 export const removeSToken = (): void => {
