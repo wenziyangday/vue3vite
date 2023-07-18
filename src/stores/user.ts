@@ -3,15 +3,12 @@ import { defineStore } from 'pinia';
 import { getInfo, login, logout } from '@/apis/login';
 import constants from '@/constants/constants';
 import { type UserInfoForm } from '@/types/userInfo';
-import { getToken, setToken } from '@/utils/token';
-
-const TOKEN =
-  'eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImRhYzQzYTY2LTk5ZWUtNGY0ZC1hY2YxLWRmOGViMjdiNDNkMSJ9.M3apZG2xDwjYgeNjGSab8nmnfwIY8OX3U-m4R3RegBRRLDzFmSmBoqZ26R0sJR-8ByR6KkIOYMOWS-wdXLZbKA';
+import { getToken, removeToken, setToken } from '@/utils/token';
 
 export const useUser = defineStore('user', {
   state: () => {
     return {
-      token: TOKEN ?? getToken(constants.token),
+      token: getToken(constants.token),
       name: '',
       avatar: '',
       expiresIn: '',
@@ -79,6 +76,7 @@ export const useUser = defineStore('user', {
             this.token = '';
             this.roles = [];
             this.permissions = [];
+            removeToken();
             resolve();
           })
           .catch((err) => {

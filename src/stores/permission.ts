@@ -5,7 +5,7 @@ import InnerLink from '@/components/inner-link/InnerLink.vue';
 import ParentView from '@/components/parent-view/ParentView.vue';
 import auth from '@/plugins/auth';
 import router, { constantRoutes, dynamicRoutes } from '@/router';
-import Layout from '@/views/layout.vue';
+import Layout from '@/views/layout/layout';
 
 /**
  * 路由权限认证
@@ -30,6 +30,7 @@ export const usePermission = defineStore('permission', {
             const sidebarRoutes = filterAsync(sData);
             const rewriteRoutes = filterAsync(rData, false, true);
             const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
+            console.log(asyncRoutes, 'asyncRoutes');
             router.addRoute(asyncRoutes);
 
             rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true });

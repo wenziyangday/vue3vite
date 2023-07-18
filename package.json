@@ -17,6 +17,7 @@
     "husky:prepare": "npx husky install && npx husky add .husky/pre-commit \"pnpm lint-staged\" && npx husky add .husky/commit-msg 'npx --no-install commitlint --edit \"$1\"'"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "ant-design-vue": "^4.0.0",
     "axios": "^0.27.2",
     "nprogress": "^0.2.0",
