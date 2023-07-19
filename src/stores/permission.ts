@@ -69,7 +69,6 @@ function filterAsync(asyncRouterMap, lastRouter, type): any[] {
     } else {
       // 动态路由 loadview / vite 版本
       const modules = import.meta.glob('../views/**/*.vue');
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const url = `../views/${route.component}.vue`;
       route.component = modules[url];
     }
@@ -89,7 +88,6 @@ function filterChildren(childrenMap, lastRouter = false): [] {
     if (el.children?.length) {
       if (el.component === 'ParentView' && !lastRouter) {
         el.children.forEach((c = {}) => {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           c.path = `${el.path}/${c.path}`;
           if (c.children?.length) {
             children = children.concat(filterChildren(c.children, c));

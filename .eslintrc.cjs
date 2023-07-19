@@ -251,6 +251,16 @@ module.exports = {
     'import/order': 'off',
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/restrict-template-expressions': [
+      'error',
+      {
+        allowAny: true,
+        allowBoolean: true,
+        allowNullish: true,
+        allowNumber: true,
+        allowRegExp: true
+      }
+    ],
     'vue/multi-word-component-names': 'off'
   }
 };
