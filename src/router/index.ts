@@ -1,35 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+/**
+ * 对于只有一个子路由的想单独显示在页面的 可以像首页那种设置方式进行设置
+ * */
 export const constantRoutes = [
   {
-    path: '/',
+    path: '',
     component: () => import('@/views/layout/layout'),
-    meta: {
-      title: '首页'
-    },
-    hidden: true,
+    redirect: 'index',
+    hidden: false,
     children: [
       {
-        path: '/',
+        path: '/index',
         component: () => import('@/views/home'),
-        hidden: true,
+        hidden: false,
         permissions: ['system:role:edit'],
         meta: {
           title: '首页'
-        }
-      },
-      {
-        path: '/register',
-        component: () => import('@/views/register'),
-        meta: {
-          title: '注册'
-        }
-      },
-      {
-        path: '/wen/shop',
-        component: () => import('@/views/shop'),
-        meta: {
-          title: '商店'
         }
       }
     ]
@@ -55,6 +42,22 @@ export const constantRoutes = [
     component: () => import('@/views/error/401'),
     meta: {
       title: '401'
+    },
+    hidden: true
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register'),
+    meta: {
+      title: '注册'
+    },
+    hidden: true
+  },
+  {
+    path: '/wen/shop',
+    component: () => import('@/views/shop'),
+    meta: {
+      title: '商店'
     },
     hidden: true
   }

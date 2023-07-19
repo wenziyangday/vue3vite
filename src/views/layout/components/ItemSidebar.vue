@@ -9,13 +9,19 @@ interface ItemSidebarProps {
 /**
  * 处理路径
  * */
-const handleCurPath = (path: string): string => {
+const handleCurPath = (route: any): string => {
   const { pathCur } = props;
-  if (pathCur) {
-    return pathCur + '/' + path;
+
+  // 处理首页路由跳转问题
+  if (!route.path && route?.children?.length > 0) {
+    return route.children?.[0].path;
   }
 
-  return path;
+  if (pathCur) {
+    return `${pathCur}/${route.path}`;
+  }
+
+  return route.path;
 };
 </script>
 
@@ -23,10 +29,11 @@ const handleCurPath = (path: string): string => {
   <template v-for="item in children">
     <template v-if="!item.hidden">
       <a-menu-item
-        v-if="(item.children ?? []).length === 0"
-        :key="handleCurPath(item.path)"
+        v-if="(item.children ?? []).length === 0 || !item.path"
+        :key="handleCurPath(item)"
       >
-        <span>{{ item?.meta?.title ?? '暂无' }}</span>
+        <span v-if="item.path">{{ item?.meta?.title ?? '暂无' }}</span>
+        <span v-else>{{ item?.children[0]['meta']['title'] ?? '暂无' }}</span>
       </a-menu-item>
       <template v-else>
         <a-sub-menu :key="handleCurPath(item.path)">
@@ -37,7 +44,7 @@ const handleCurPath = (path: string): string => {
           </template>
           <item-sidebar
             :children="item.children"
-            :path-cur="handleCurPath(item.path)"
+            :path-cur="handleCurPath(item)"
           />
         </a-sub-menu>
       </template>
