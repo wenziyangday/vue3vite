@@ -96,7 +96,11 @@ router.beforeEach((to, from, next) => {
             // 动态获取权限路由表
             permission.generatorRoutes().then((gRoutes) => {
               // 根据roles权限生成可访问的路由表
-              router.addRoute(gRoutes); // 动态添加可访问路由表
+              gRoutes.forEach((route) => {
+                if (route.path.indexOf('http') === -1) {
+                  router.addRoute(route);
+                }
+              });
               // hack方法 确保addRoutes已完成
               next({ ...to, replace: true });
             });

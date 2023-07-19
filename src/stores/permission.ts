@@ -30,15 +30,21 @@ export const usePermission = defineStore('permission', {
             const sidebarRoutes = filterAsync(sData);
             const rewriteRoutes = filterAsync(rData, false, true);
             const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
-            console.log(asyncRoutes, 'asyncRoutes');
-            router.addRoute(asyncRoutes);
-
-            rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true });
+            asyncRoutes.forEach((route) => {
+              router.addRoute(route);
+            });
+            // 处理 * vue3 不匹配路由跳转
+            rewriteRoutes.push({
+              path: '/:pathMatch(.*)*',
+              redirect: '/404',
+              hidden: true
+            });
             this.addRoutes = rewriteRoutes;
             this.routes = constantRoutes.concat(rewriteRoutes);
             this.sidebarRouters = constantRoutes.concat(sidebarRoutes);
             this.defaultRoutes = constantRoutes.concat(sidebarRoutes);
             this.topBarRouters = sidebarRoutes;
+            console.log(rewriteRoutes, 'rewriteRoutes');
 
             resolve(rewriteRoutes);
           })
