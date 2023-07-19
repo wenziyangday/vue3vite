@@ -44,8 +44,6 @@ export const usePermission = defineStore('permission', {
             this.sidebarRouters = constantRoutes.concat(sidebarRoutes);
             this.defaultRoutes = constantRoutes.concat(sidebarRoutes);
             this.topBarRouters = sidebarRoutes;
-            console.log(rewriteRoutes, 'rewriteRoutes');
-
             resolve(rewriteRoutes);
           })
           .catch((err) => {
@@ -69,7 +67,11 @@ function filterAsync(asyncRouterMap, lastRouter, type): any[] {
     } else if (route.component === 'InnerLink') {
       route.component = InnerLink;
     } else {
-      route.component = loadView(route.component);
+      // 动态路由 loadview / vite 版本
+      const modules = import.meta.glob('../views/**/*.vue');
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const url = `../views/${route.component}.vue`;
+      route.component = modules[url];
     }
     if (route.children?.length) {
       route.children = filterAsync(route.children, route, type);
@@ -122,13 +124,4 @@ export function filterDynamicRoutes(routes): any[] {
     }
   });
   return res;
-}
-
-function loadView(view: string): Promise {
-  if (import.meta.env.MODE === 'development') {
-    return (resolve) => require([`@/views/${view}.vue`], resolve);
-  } else {
-    // 使用 import 实现生产环境的路由懒加载
-    return () => import(`@/views/${view}.vue`);
-  }
 }

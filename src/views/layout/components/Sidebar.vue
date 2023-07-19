@@ -7,7 +7,6 @@ import ItemSidebar from '@/views/layout/components/ItemSidebar.vue';
 const permission = usePermission();
 const { sidebarRouters } = permission;
 const router = useRouter();
-console.log(router.getRoutes(), 'router');
 
 /**
  * menu item 点击事件
