@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import Sidebar from '@/views/layout/components/Sidebar.vue';
+import TopBar from '@/views/layout/components/Topbar.vue';
 </script>
 <template>
   <a-layout class="wrap-layout" has-sider>
-    <a-layout-sider class="fixed-sidebar">
+    <a-layout-sider class="sticky-sidebar">
       <sidebar />
     </a-layout-sider>
     <a-layout-content class="content-margin">
-      <router-view></router-view>
+      <top-bar />
+      <router-view />
     </a-layout-content>
   </a-layout>
 </template>
@@ -16,17 +18,13 @@ import Sidebar from '@/views/layout/components/Sidebar.vue';
 .wrap-layout {
   min-height: 100vh;
 
-  .fixed-sidebar {
+  .sticky-sidebar {
     height: 100vh;
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     z-index: 9;
     overflow: auto;
-  }
-
-  .content-margin {
-    margin-left: 200px;
   }
 }
 </style>

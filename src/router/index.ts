@@ -14,6 +14,7 @@ export const constantRoutes = [
         path: '/index',
         component: () => import('@/views/home'),
         hidden: false,
+        name: 'Index',
         permissions: ['system:role:edit'],
         meta: {
           title: '首页'

@@ -27,3 +27,11 @@ export function transformParams(params: any): string {
   }
   return result;
 }
+
+/**
+ * 图片文件引入
+ * @param {*} url  路径
+ */
+export function getAssetsUrl(url: string): string {
+  return new URL(`../assets/${url}`, import.meta.url).href;
+}

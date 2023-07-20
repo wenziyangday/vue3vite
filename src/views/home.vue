@@ -37,6 +37,15 @@ const columns = [
     <div class="font">这是一个首页</div>
     <a-button type="primary">点击</a-button>
     <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-table :dataSource="dataSource" :columns="columns" />
   </div>
 </template>
 

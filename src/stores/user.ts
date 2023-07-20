@@ -4,6 +4,7 @@ import { getInfo, login, logout } from '@/apis/login';
 import constants from '@/constants/constants';
 import { type UserInfoForm } from '@/types/userInfo';
 import { getToken, removeToken, setToken } from '@/utils/token';
+import { getAssetsUrl } from '@/utils/tools';
 
 export const useUser = defineStore('user', {
   state: () => {
@@ -49,7 +50,7 @@ export const useUser = defineStore('user', {
               roles,
               permissions
             } = res;
-            this.avatar = avatar ?? require('@/assets/logo.png');
+            this.avatar = avatar || getAssetsUrl('logo.png');
             this.name = userName;
             if (roles && roles.length > 0) {
               this.roles = roles;

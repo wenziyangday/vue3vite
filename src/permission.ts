@@ -6,6 +6,7 @@ import router from '@/router';
 import { usePermission } from '@/stores/permission';
 import { useUser } from '@/stores/user';
 import { isReLogin } from '@/utils/request';
+import { clearStorage } from '@/utils/storeage';
 import { getToken } from '@/utils/token';
 
 NProgress.configure({ showSpinner: false });
@@ -38,11 +39,11 @@ router.beforeEach((to, from, next) => {
               next({ ...to, replace: true });
             });
           })
-          .catch((err) => {
+          .catch(() => {
             void user
               .logoutACT()
               .then(() => {
-                NProgress.error(err);
+                clearStorage();
               })
               .catch();
           });
