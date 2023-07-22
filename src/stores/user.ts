@@ -78,6 +78,7 @@ export const useUser = defineStore('user', {
             this.roles = [];
             this.permissions = [];
             removeToken();
+            location.href = '/';
             resolve();
           })
           .catch((err) => {

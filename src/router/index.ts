@@ -23,6 +23,26 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/emulate',
+    component: () => import('@/views/layout/layout'),
+    hidden: false,
+    meta: {
+      title: 'emulate'
+    },
+    children: [
+      {
+        path: 'emulate',
+        component: () => import('@/views/emulate'),
+        hidden: false,
+        name: 'Emulate',
+        permissions: ['system:role:edit'],
+        meta: {
+          title: 'emulate'
+        }
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login'),
     meta: {

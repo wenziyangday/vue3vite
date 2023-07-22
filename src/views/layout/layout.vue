@@ -9,7 +9,9 @@ import TopBar from '@/views/layout/components/Topbar.vue';
     </a-layout-sider>
     <a-layout-content class="content-margin">
       <top-bar />
-      <router-view />
+      <div class="app-content">
+        <router-view />
+      </div>
     </a-layout-content>
   </a-layout>
 </template>
@@ -25,6 +27,10 @@ import TopBar from '@/views/layout/components/Topbar.vue';
     left: 0;
     z-index: 9;
     overflow: auto;
+  }
+
+  .app-content {
+    padding: 20px;
   }
 }
 </style>

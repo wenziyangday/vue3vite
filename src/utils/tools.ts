@@ -35,3 +35,19 @@ export function transformParams(params: any): string {
 export function getAssetsUrl(url: string): string {
   return new URL(`../assets/${url}`, import.meta.url).href;
 }
+
+/**
+ * 处理 listclass 转变为 color
+ * @param {*} type 类型
+ * */
+export function colorListClass(type: string): string {
+  const types = {
+    success: '#67C23A',
+    info: '#909399',
+    warning: '#E6A23C',
+    danger: '#F56C6C',
+    primary: '#409EFF'
+  };
+
+  return types[type] ?? '#ff17ef';
+}

@@ -3,8 +3,8 @@ import { defineStore } from 'pinia';
 import { getRouters } from '@/apis/menu';
 import InnerLink from '@/components/inner-link/InnerLink.vue';
 import ParentView from '@/components/parent-view/ParentView.vue';
-import auth from '@/plugins/auth';
 import router, { constantRoutes, dynamicRoutes } from '@/router';
+import auth from '@/utils/auth';
 import Layout from '@/views/layout/layout';
 
 /**
