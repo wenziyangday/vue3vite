@@ -224,7 +224,7 @@ module.exports = {
     'selector-combinator-space-before': 'always',
     'selector-combinator-space-after': 'always',
     //  分隔多个选择器之间的 "," 后必须有空格
-    'selector-list-comma-space-after': 'always',
+    'selector-list-comma-space-after': 'always-single-line',
     //  分隔多个选择器之间的 "," 前不能有空格
     'selector-list-comma-space-before': 'never',
     //  子代选择器之间没有额外空格

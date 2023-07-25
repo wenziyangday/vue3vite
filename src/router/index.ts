@@ -81,6 +81,13 @@ export const constantRoutes = [
       title: '商店'
     },
     hidden: true
+  },
+  {
+    path: '/:pathMatch(.*)*', // 解决路由爆[Vue Router warn]: No match found for location with path
+    meta: {
+      title: '找不到此页面'
+    },
+    component: () => import('@/views/error/404.vue') // 切记不要使用 redirect: '/403',
   }
 ];
 
