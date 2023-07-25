@@ -87,6 +87,7 @@ export const constantRoutes = [
     meta: {
       title: '找不到此页面'
     },
+    hidden: true,
     component: () => import('@/views/error/404.vue') // 切记不要使用 redirect: '/403',
   }
 ];
