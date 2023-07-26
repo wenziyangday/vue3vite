@@ -135,13 +135,13 @@ module.exports = {
     strict: [2, 'function'], // 使用严格模式
     'no-catch-shadow': 2, // 不允许try catch语句接受的err变量与外部变量重名"no-delete-var": 2, //不允许使用delete操作符
     'no-label-var': 2, // 不允许标签和变量同名
-    'no-shadow': 2, // 外部作用域中的变量不能与它所包含的作用域中的变量或参数同名
+    'no-shadow': 0, // 外部作用域中的变量不能与它所包含的作用域中的变量或参数同名
     'no-shadow-restricted-names': 2, // js关键字和保留字不能作为函数名或者变量名
     'no-undef': 2, // 不允许未声明的变量
     'no-undef-init': 2, // 不允许初始化变量时给变量赋值undefined
     'no-undefined': 2, // 不允许把undefined当做标识符使用
     'no-unused-vars': [
-      2,
+      0,
       {
         vars: 'all',
         args: 'after-used'
@@ -261,6 +261,8 @@ module.exports = {
         allowRegExp: true
       }
     ],
+    '@typescript-eslint/no-shadow': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
     'vue/multi-word-component-names': 'off'
   }
 };
