@@ -208,13 +208,11 @@ const resetForm = (): void => {
 </template>
 
 <style lang="less" scoped>
-.form-margin {
-  .form-item {
-    margin-right: 0;
-  }
+.form-item {
+  margin-right: 0;
+}
 
-  .btn {
-    padding: 0;
-  }
+.btn {
+  padding: 0;
 }
 </style>

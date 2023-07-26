@@ -16,7 +16,7 @@ const props = withDefaults(
     // SizeType
     btnSize?: SizeType;
     // row gutter
-    rowGutter?: number;
+    rowGutter?: number | number[];
     // 第几个后开始出现折叠
     dropdownLength?: number;
   }>(),
