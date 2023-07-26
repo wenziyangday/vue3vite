@@ -180,15 +180,15 @@ const resetForm = (): void => {
             class="form-item"
           >
             <a-range-picker
-              v-if="eInput.inputType === 'timeRange'"
+              v-if="foldInput.inputType === 'timeRange'"
               v-model:value="formState[foldInput.name]"
               style="width: 100%"
               allow-clear
             />
 
             <a-select
-              v-else-if="eInput.inputType === 'select'"
-              :options="dictObjs[eInput.selectType]"
+              v-else-if="foldInput.inputType === 'select'"
+              :options="dictObjs[foldInput.selectType]"
               v-model:value="formState[foldInput.name]"
               style="width: 100%"
               allow-clear
