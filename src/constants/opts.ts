@@ -1,24 +1,22 @@
 /**
  * 操作常量
- * 操作类型
  * */
-export type OptType =
-  | 'add'
-  | 'edit'
-  | 'delete'
-  | 'detail'
-  | 'export'
-  | 'import';
+import { type OptType, type OptTypeCN } from '@/types/opts';
 
-export type OptTypeCN = '新增' | '修改' | '删除' | '详情' | '导出' | '导入';
-
+/**
+ * @param {
+ *   type: '操作按钮类型',
+ *   label: '操作按钮的标题',
+ *   icon: '操作按钮的图标'
+ * }
+ * */
 interface IOpt {
   type: OptType;
   label: OptTypeCN;
   icon: string;
 }
 
-const opts: IOpt[] = [
+export const opts: IOpt[] = [
   {
     type: 'add',
     label: '新增',
@@ -50,5 +48,3 @@ const opts: IOpt[] = [
     icon: 'import-outlined'
   }
 ];
-
-export default opts;

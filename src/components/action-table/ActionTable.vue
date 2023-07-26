@@ -1,16 +1,23 @@
+<!--table 操作按钮-->
 <script setup lang="ts">
 import { type ButtonType } from 'ant-design-vue/es/button';
 import { type SizeType } from 'ant-design-vue/es/config-provider/context';
 import { computed, ref } from 'vue';
 
-import optsCONSTANT, { type OptType } from '@/constants/opts';
+import { opts as optsCONSTANT } from '@/constants/opts';
+import { type OptType } from '@/types/opts';
 
 const props = withDefaults(
   defineProps<{
+    // 按钮选项
     options?: OptType[];
+    // ButtonType
     btnType?: ButtonType;
+    // SizeType
     btnSize?: SizeType;
+    // row gutter
     rowGutter?: number;
+    // 第几个后开始出现折叠
     dropdownLength?: number;
   }>(),
   {
@@ -45,7 +52,7 @@ const opts = computed(() => {
 /**
  * 展开的操作按钮
  * */
-const rowOpts = computed(() => {
+const expandOpts = computed(() => {
   if (opts.value.length >= props.dropdownLength) {
     return opts.value.slice(0, props.dropdownLength);
   }
@@ -56,7 +63,7 @@ const rowOpts = computed(() => {
 /**
  * 折叠的操作按钮
  * */
-const dropOpts = computed(() => {
+const foldOpts = computed(() => {
   if (opts.value.length > props.dropdownLength) {
     return opts.value.slice(props.dropdownLength);
   }
@@ -74,7 +81,7 @@ const handleEmit = (type: string): void => {
 
 <template>
   <a-row align="middle" justify="center" :gutter="props.rowGutter">
-    <a-col :span="1.5" v-for="(opt, index) in rowOpts" :key="index">
+    <a-col :span="1.5" v-for="(opt, index) in expandOpts" :key="index">
       <a-button
         :size="props.btnSize"
         :type="props.btnType"
@@ -87,7 +94,7 @@ const handleEmit = (type: string): void => {
       </a-button>
     </a-col>
     <slot name="opt"></slot>
-    <a-col :span="1.5" v-if="dropOpts.length > 0">
+    <a-col :span="1.5" v-if="foldOpts.length > 0">
       <a-dropdown arrow>
         <a-button :size="props.btnSize" :type="props.btnType">
           <span style="margin-right: -4px">更多</span>
@@ -95,16 +102,16 @@ const handleEmit = (type: string): void => {
         </a-button>
         <template #overlay>
           <a-menu>
-            <a-menu-item v-for="(dropOpt, index) in dropOpts" :key="index">
+            <a-menu-item v-for="(foldOpt, index) in foldOpts" :key="index">
               <a-button
                 size="small"
                 type="link"
-                @click="handleEmit(dropOpt.type)"
+                @click="handleEmit(foldOpt.type)"
               >
                 <template #icon>
-                  <component :is="dropOpt.icon"></component>
+                  <component :is="foldOpt.icon"></component>
                 </template>
-                <span style="margin-left: 4px">{{ dropOpt.label }}</span>
+                <span style="margin-left: 4px">{{ foldOpt.label }}</span>
               </a-button>
             </a-menu-item>
           </a-menu>
