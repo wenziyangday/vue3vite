@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Form, message, Modal, type TableColumnsType } from 'ant-design-vue';
-import {
-  computed,
-  createVNode,
-  h,
-  inject,
-  onMounted,
-  reactive,
-  ref
-} from 'vue';
+import { computed, createVNode, h, inject, reactive, ref } from 'vue';
 
 import {
   addNotice,
@@ -22,6 +14,7 @@ import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
 import Search from '@/components/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
+import useTableRequest from '@/plugins/hooks/tableRequest';
 import { type IOptSearch } from '@/types/opts';
 
 /**
@@ -92,50 +85,15 @@ const columnsGetters = computed(() =>
   }))
 );
 
-/**
- * DataSource
- * */
-const dataSource: [] = ref([]);
-const rowKeys = ref<string | number[]>([]);
-const paginationIndicator = ref({
-  current: 1,
-  defaultPageSize: 10,
-  total: 0
-});
-
-/**
- * 获取公告列表
- * */
-const formStatus = ref<unknown>({});
-const getList = (): void => {
-  const {
-    value: { current: pageNum, defaultPageSize: pageSize }
-  } = paginationIndicator;
-  listNotice({
-    pageNum,
-    pageSize,
-    ...formStatus.value
-  }).then((res) => {
-    dataSource.value = res.rows;
-    paginationIndicator.value.total = res.total;
-  });
-};
-
-/**
- * 分页控制器
- * */
-const handleChange = (pagination): void => {
-  paginationIndicator.value = pagination;
-  getList();
-};
-
-/**
- * 搜索回调
- * */
-const searchCb = (formState: unknown): void => {
-  formStatus.value = formState;
-  getList();
-};
+const {
+  dataSource,
+  paginationIndicator,
+  rowKeys,
+  handleChangeSelection,
+  handleChange,
+  getList,
+  searchCb
+} = useTableRequest(listNotice);
 
 /**
  * modal state
@@ -235,17 +193,6 @@ const handleActionsTable = (type: string, record?: unknown): void => {
     });
   }
 };
-
-/**
- * 多选
- * */
-const handleChangeSelection = (selectedRowKeys: string | number[]): void => {
-  rowKeys.value = selectedRowKeys;
-};
-
-onMounted(() => {
-  getList();
-});
 </script>
 
 <template>
