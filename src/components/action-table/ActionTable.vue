@@ -80,7 +80,7 @@ const handleEmit = (type: string): void => {
 </script>
 
 <template>
-  <a-row align="middle" justify="center" :gutter="props.rowGutter">
+  <a-row justify="center" :gutter="props.rowGutter">
     <a-col :span="1.5" v-for="(opt, index) in expandOpts" :key="index">
       <a-button
         :size="props.btnSize"
