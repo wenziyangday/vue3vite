@@ -241,6 +241,14 @@ module.exports = {
     'declaration-block-no-duplicate-properties': [
       true,
       { ignore: ['consecutive-duplicates'] }
+    ],
+    // 禁止未知的伪类选择器
+    'selector-pseudo-class-no-unknown': [
+      true,
+      {
+        // 忽略伪类
+        ignorePseudoClasses: ['global', 'deep']
+      }
     ]
   }
 };
