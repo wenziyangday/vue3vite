@@ -1,9 +1,24 @@
 <script setup lang="ts">
-import { Form, type TableColumnsType } from 'ant-design-vue';
-import { computed, inject, onMounted, reactive, ref } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Form, message, Modal, type TableColumnsType } from 'ant-design-vue';
+import {
+  computed,
+  createVNode,
+  h,
+  inject,
+  onMounted,
+  reactive,
+  ref
+} from 'vue';
 
-import { addNotice, listNotice, updateNotice } from '@/apis/system/notice';
+import {
+  addNotice,
+  delNotice,
+  listNotice,
+  updateNotice
+} from '@/apis/system/notice';
 import ActionTable from '@/components/action-table/ActionTable.vue';
+import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
 import Search from '@/components/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
@@ -81,6 +96,7 @@ const columnsGetters = computed(() =>
  * DataSource
  * */
 const dataSource: [] = ref([]);
+const rowKeys = ref<string | number[]>([]);
 const paginationIndicator = ref({
   current: 1,
   defaultPageSize: 10,
@@ -90,14 +106,15 @@ const paginationIndicator = ref({
 /**
  * 获取公告列表
  * */
-const getList = (formState?: unknown): void => {
+const formStatus = ref<unknown>({});
+const getList = (): void => {
   const {
     value: { current: pageNum, defaultPageSize: pageSize }
   } = paginationIndicator;
   listNotice({
     pageNum,
     pageSize,
-    ...formState
+    ...formStatus.value
   }).then((res) => {
     dataSource.value = res.rows;
     paginationIndicator.value.total = res.total;
@@ -115,8 +132,9 @@ const handleChange = (pagination): void => {
 /**
  * 搜索回调
  * */
-const searchCb = (formStatus: unknown): void => {
-  getList(formStatus);
+const searchCb = (formState: unknown): void => {
+  formStatus.value = formState;
+  getList();
 };
 
 /**
@@ -167,12 +185,13 @@ const handlePostNotice = (): void => {
  * 表格操作统一处理
  * */
 const handleActionsTable = (type: string, record?: unknown): void => {
+  let { noticeTitle, noticeType, status, noticeContent, noticeId, index } =
+    record ?? {};
   optType.value = type;
   if (type === 'add') {
     open.value = true;
     resetFields();
   } else if (type === 'edit') {
-    const { noticeTitle, noticeType, status, noticeContent, noticeId } = record;
     // 对于contentState是reactive，需使用下面更新对象的操作方式，从而保留响应式
     // contentState.noticeTitle = noticeTitle;
     // contentState.noticeType = noticeType;
@@ -187,7 +206,41 @@ const handleActionsTable = (type: string, record?: unknown): void => {
       noticeId
     };
     open.value = true;
+  } else if (type === 'delete') {
+    if (!noticeId) {
+      if (rowKeys.value.length === 0) {
+        void message.warning('请选中至少一条数据进行操作');
+        return;
+      }
+      noticeId = rowKeys.value.join(',');
+    }
+    Modal.confirm({
+      title: '系统提示',
+      closable: true,
+      icon: () => {},
+      content: h('div', [
+        createVNode(ExclamationCircleOutlined),
+        createVNode(ConfirmContent, {
+          msg: `${index ?? '多条'}`,
+          icon: 'delete-outlined'
+        })
+      ]),
+      okText: '确认',
+      onOk: () => {
+        delNotice(noticeId).then(() => {
+          void message.success('删除成功');
+          getList();
+        });
+      }
+    });
   }
+};
+
+/**
+ * 多选
+ * */
+const handleChangeSelection = (selectedRowKeys: string | number[]): void => {
+  rowKeys.value = selectedRowKeys;
 };
 
 onMounted(() => {
@@ -200,7 +253,7 @@ onMounted(() => {
   <a-row class="bottom-row" justify="space-between">
     <a-col>
       <action-table
-        :options="['add', 'export', 'delete']"
+        :options="['add', 'delete']"
         :row-gutter="16"
         :dropdown-length="4"
         @click-cb="handleActionsTable"
@@ -212,6 +265,10 @@ onMounted(() => {
     :columns="columnsGetters"
     :data-source="dataSource"
     :pagination="paginationIndicator"
+    row-key="noticeId"
+    :row-selection="{
+      onChange: handleChangeSelection
+    }"
     @change="handleChange"
   >
     <template #bodyCell="{ column, index, text, record }">
@@ -229,7 +286,7 @@ onMounted(() => {
           :options="['edit', 'delete']"
           @click-cb="
             (type) => {
-              handleActionsTable(type, record);
+              handleActionsTable(type, { ...record, index: index + 1 });
             }
           "
         />
