@@ -68,6 +68,7 @@ const unMatched: boolean = () => {
       v-else
       :class="option.raw.cssClass"
       :color="colorListClass(option.raw.listClass)"
+      :style="optionsFilter.length > 0 ? 'margin-right: 0' : ''"
       >{{ option.label }}
     </a-tag>
   </template>
