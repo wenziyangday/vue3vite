@@ -12,10 +12,13 @@ const props = withDefaults(
     labelSpan?: number;
     // form表单
     options?: IOptSearch[];
+    // 折叠
+    dropdownLength?: number;
   }>(),
   {
     labelSpan: 6,
-    options: () => []
+    options: () => [],
+    dropdownLength: 3
   }
 );
 
@@ -28,13 +31,14 @@ const emit = defineEmits<{
  * form item wrapperCol = {span: wrapSpan}
  * */
 const wrapSpan = computed(() => 24 - props.labelSpan);
+const colSpan = computed(() => 24 / (props.dropdownLength + 1));
 
 /**
  * 展开的输入框
  * */
 const expandInputs = computed(() => {
-  if (props.options.length >= 4) {
-    return props.options.slice(0, 4);
+  if (props.options.length >= props.dropdownLength) {
+    return props.options.slice(0, props.dropdownLength);
   }
 
   return props.options;
@@ -44,8 +48,8 @@ const expandInputs = computed(() => {
  * 收起的输入框
  * */
 const foldInputs = computed(() => {
-  if (props.options.length > 4) {
-    return props.options.slice(4);
+  if (props.options.length > props.dropdownLength) {
+    return props.options.slice(props.dropdownLength);
   }
   return [];
 });
@@ -107,12 +111,11 @@ const resetForm = (): void => {
   <a-form
     :model="formState"
     class="form-margin"
-    layout="inline"
     :label-col="{ span: props.labelSpan }"
     :wrapper-col="{ span: wrapSpan }"
   >
-    <a-row :gutter="[16, 16]" style="width: 100%">
-      <a-col :span="5" v-for="eInput in expandInputs" :key="eInput.label">
+    <a-row :gutter="[16, 16]">
+      <a-col :span="colSpan" v-for="eInput in expandInputs" :key="eInput.label">
         <a-form-item
           :label="eInput.label"
           :name="eInput.name"
@@ -141,8 +144,8 @@ const resetForm = (): void => {
           />
         </a-form-item>
       </a-col>
-      <a-col :span="4">
-        <a-row justify="space-between">
+      <a-col :span="colSpan">
+        <a-row :gutter="[16, 16]">
           <a-col v-if="showExpandFold">
             <a-tooltip placement="top">
               <template #title>
@@ -173,7 +176,11 @@ const resetForm = (): void => {
         </a-row>
       </a-col>
       <template v-if="showExpandFold && controlShowExpandFold">
-        <a-col :span="5" v-for="foldInput in foldInputs" :key="foldInput.label">
+        <a-col
+          :span="colSpan"
+          v-for="foldInput in foldInputs"
+          :key="foldInput.label"
+        >
           <a-form-item
             :label="foldInput.label"
             :name="foldInput.name"
@@ -208,8 +215,13 @@ const resetForm = (): void => {
 </template>
 
 <style lang="less" scoped>
+.form-margin {
+  width: 100%;
+}
+
 .form-item {
   margin-right: 0;
+  margin-bottom: 0;
 }
 
 .btn {
