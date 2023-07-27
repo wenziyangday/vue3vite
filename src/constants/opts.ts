@@ -46,5 +46,15 @@ export const opts: IOpt[] = [
     type: 'import',
     label: '导入',
     icon: 'import-outlined'
+  },
+  {
+    type: 'resetPassword',
+    label: '重置密码',
+    icon: 'key-outlined'
+  },
+  {
+    type: 'assignRoles',
+    label: '分配角色',
+    icon: 'sisternode-outlined'
   }
 ];

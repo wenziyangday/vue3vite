@@ -1,5 +1,3 @@
-import { type IDict } from '@/types/dicts';
-
 /**
  * 操作按钮类型
  * */
@@ -9,9 +7,19 @@ export type OptType =
   | 'delete'
   | 'detail'
   | 'export'
-  | 'import';
+  | 'import'
+  | 'resetPassword'
+  | 'assignRoles';
 
-export type OptTypeCN = '新增' | '修改' | '删除' | '详情' | '导出' | '导入';
+export type OptTypeCN =
+  | '新增'
+  | '修改'
+  | '删除'
+  | '详情'
+  | '导出'
+  | '导入'
+  | '重置密码'
+  | '分配角色';
 
 /**
  * 搜索相关的类型
