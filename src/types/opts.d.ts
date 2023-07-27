@@ -16,7 +16,7 @@ export type OptTypeCN = '新增' | '修改' | '删除' | '详情' | '导出' | '
 /**
  * 搜索相关的类型
  * */
-type InputType = 'input' | 'select' | 'timeRange';
+type InputType = 'input' | 'select' | 'dateRangePicker' | 'datePicker';
 
 /**
  * @param {

@@ -122,7 +122,14 @@ const resetForm = (): void => {
           class="form-item"
         >
           <a-range-picker
-            v-if="eInput.inputType === 'timeRange'"
+            v-if="eInput.inputType === 'dateRangePicker'"
+            v-model:value="formState[eInput.name]"
+            style="width: 100%"
+            allow-clear
+          />
+
+          <a-date-picker
+            v-else-if="eInput.inputType === 'datePicker'"
             v-model:value="formState[eInput.name]"
             style="width: 100%"
             allow-clear
@@ -187,7 +194,14 @@ const resetForm = (): void => {
             class="form-item"
           >
             <a-range-picker
-              v-if="foldInput.inputType === 'timeRange'"
+              v-if="foldInput.inputType === 'dateRangePicker'"
+              v-model:value="formState[foldInput.name]"
+              style="width: 100%"
+              allow-clear
+            />
+
+            <a-date-picker
+              v-else-if="foldInput.inputType === 'datePicker'"
               v-model:value="formState[foldInput.name]"
               style="width: 100%"
               allow-clear
