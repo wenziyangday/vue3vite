@@ -105,6 +105,8 @@ const {
   searchCb
 } = useTableRequest(listUser);
 
+const checkedKeys = ref<any[]>([]);
+
 // 树的选择事件
 const handleTreeSelect = (selectedKeys): void => {
   const [deptId] = selectedKeys;
@@ -119,6 +121,14 @@ const handleDeptTreeSelect = (): void => {
   deptTreeSelect().then((res) => {
     treeData.value = res.data;
   });
+};
+
+// 重置表
+const resetCb = (): void => {
+  filterTreeInput.value = null;
+  formStatus.value = {};
+  checkedKeys.value = [];
+  getList();
 };
 
 onBeforeMount(() => {
@@ -144,6 +154,7 @@ onBeforeMount(() => {
       </a-form>
       <a-tree
         v-if="treeData.length"
+        v-model:selected-keys="checkedKeys"
         :tree-data="treeData"
         :field-names="{
           key: 'id',
@@ -164,7 +175,7 @@ onBeforeMount(() => {
         :label-span="6"
         :dropdown-length="3"
         @search-cb="searchCb"
-        @reset-cb="getList"
+        @reset-cb="resetCb"
       />
       <a-row class="form-item-margin">
         <a-col>
