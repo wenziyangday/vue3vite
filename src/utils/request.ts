@@ -36,11 +36,35 @@ service.interceptors.request.use(
       config.headers.Authorization = `${constants.tokenPrefix} ${getToken()}`;
     }
 
-    const { method, url, params } = config;
+    const { method, url, params, isTimeInclude } = config;
+    let newParams = params;
+    // ####begin 不够优雅
+    if (isTimeInclude) {
+      const oldParams = JSON.parse(JSON.stringify(params || {}));
+      const filterKeys = Object.keys(oldParams).filter(
+        (key) =>
+          key.toLocaleLowerCase().includes('time') &&
+          Array.isArray(oldParams[key]) &&
+          oldParams[key].length === 2
+      );
+
+      const [key] = filterKeys;
+      const [beginTime, endTime] = oldParams[key] || [];
+      oldParams[key] = null;
+
+      newParams = {
+        ...oldParams,
+        params: {
+          beginTime: beginTime?.slice(0, 10),
+          endTime: endTime?.slice(0, 10)
+        }
+      };
+    }
+    // #####end
 
     // get 请求需要拼装字符串
     if (method?.toLocaleLowerCase() === 'get' && params) {
-      let uri: string = `${url ?? ''}?${transformParams(params)}`;
+      let uri: string = `${url ?? ''}?${transformParams(newParams)}`;
       uri = uri.slice(0, -1);
       config.params = {};
       config.url = uri;
@@ -125,7 +149,6 @@ service.interceptors.response.use(
           }
         });
       }
-      // TODO 超期处理
       return Promise.reject(
         new Error('无效的会话，或者会话已过期，请重新登录。')
       );

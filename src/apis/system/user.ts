@@ -5,7 +5,8 @@ export function listUser(query): Promise {
   return request({
     url: '/system/user/list',
     method: 'get',
-    params: query
+    params: query,
+    isTimeInclude: true
   });
 }
 
