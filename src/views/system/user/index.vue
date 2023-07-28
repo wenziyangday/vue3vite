@@ -7,7 +7,7 @@ import ActionTable from '@/components/action-table/ActionTable.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
 import Search from '@/components/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
-import useTableRequest from '@/plugins/hooks/tableRequest';
+import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IOptSearch } from '@/types/opts';
 
 /**
@@ -96,6 +96,7 @@ const columnsGetters = computed(() =>
 );
 const {
   dataSource,
+  formStatus,
   rowKeys,
   paginationIndicator,
   handleChangeSelection,
@@ -103,6 +104,13 @@ const {
   getList,
   searchCb
 } = useTableRequest(listUser);
+
+// 树的选择事件
+const handleTreeSelect = (selectedKeys): void => {
+  const [deptId] = selectedKeys;
+  formStatus.value.deptId = deptId;
+  getList();
+};
 
 /**
  * 获取部门树
@@ -115,7 +123,6 @@ const handleDeptTreeSelect = (): void => {
 
 onBeforeMount(() => {
   handleDeptTreeSelect();
-  getList();
 });
 </script>
 
@@ -144,6 +151,7 @@ onBeforeMount(() => {
           children: 'children'
         }"
         :filter-tree-node="filterTreeNode"
+        @select="handleTreeSelect"
         show-line
         default-expand-all
         block-node
@@ -173,7 +181,10 @@ onBeforeMount(() => {
         :pagination="paginationIndicator"
         row-key="userId"
         :row-selection="{
-          onChange: handleChangeSelection
+          onChange: handleChangeSelection,
+          getCheckboxProps: (record) => ({
+            disabled: record.userId === 1
+          })
         }"
         @change="handleChange"
       >

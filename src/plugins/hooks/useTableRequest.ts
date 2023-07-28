@@ -55,6 +55,7 @@ const useTableRequest = function (requestCb: Promise): unknown {
   return {
     dataSource,
     rowKeys,
+    formStatus,
     paginationIndicator,
     searchCb,
     handleChangeSelection,
