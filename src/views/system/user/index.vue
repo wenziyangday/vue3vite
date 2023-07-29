@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { message, Modal, type TableColumnsType } from 'ant-design-vue';
+import {
+  message,
+  Modal,
+  type TableColumnsType,
+  type UploadChangeParam
+} from 'ant-design-vue';
 import {
   computed,
   createVNode,
@@ -25,6 +30,7 @@ import DictTag from '@/components/dict-tag/DictTag.vue';
 import VWForm from '@/components/table/form/VWForm.vue';
 import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
+import useImport from '@/plugins/hooks/useImport';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IFormItem, type IOptSearch } from '@/types/opts';
 
@@ -294,6 +300,7 @@ const handleActionTables = (type: string, record?: unknown = {}): void => {
     handleUserInfo();
   }
   if (type === 'add') {
+    title.value = '添加用户';
     defaultValue.value = {};
     options.value = defaultOptions;
     open.value = true;
@@ -301,6 +308,7 @@ const handleActionTables = (type: string, record?: unknown = {}): void => {
   }
 
   if (type === 'edit') {
+    title.value = '修改用户';
     // 隐藏值
     options.value = options.value.filter(
       (option) => option.name !== 'password'
@@ -311,7 +319,6 @@ const handleActionTables = (type: string, record?: unknown = {}): void => {
       defaultValue.value = record;
       defaultValue.value.roleIds = res.roleIds;
       defaultValue.value.postIds = res.postIds;
-      console.log(defaultValue.value);
       open.value = true;
     });
   }
@@ -355,6 +362,10 @@ const handleActionTables = (type: string, record?: unknown = {}): void => {
       `user_${+new Date()}.xlsx`
     );
   }
+
+  if (type === 'import') {
+    uploadRef.value.isOpen = true;
+  }
 };
 
 /**
@@ -373,6 +384,31 @@ const modalOk = (): void => {
       getList();
     });
   });
+};
+
+/**
+ * 导入
+ * */
+const uploadRef = useImport();
+const handleImportChange = (info: UploadChangeParam): void => {
+  const status = info.file.status;
+  if (status !== 'uploading') {
+    console.log(info.file, info.fileList);
+  }
+  if (status === 'done') {
+    void message.success(`${info.file.name} file uploaded successfully.`);
+  } else if (status === 'error') {
+    void message.error(`${info.file.name} file upload failed.`);
+  }
+};
+
+/** 下载模板操作 */
+const importTemplate = (): void => {
+  download(
+    'system/user/importTemplate',
+    {},
+    `user_template_${+new Date()}.xlsx`
+  );
 };
 
 onMounted(() => {
@@ -483,6 +519,32 @@ onMounted(() => {
       :default-value="defaultValue"
     />
   </a-modal>
+  <a-modal v-model:open="uploadRef.isOpen" title="用户导入">
+    <a-upload-dragger
+      v-model:fileList="fileList"
+      name="file"
+      :max-count="1"
+      accept=".xlsx, .xls"
+      :multiple="true"
+      :headers="uploadRef.headers"
+      :action="uploadRef.url"
+      @change="handleImportChange"
+    >
+      <p class="ant-upload-drag-icon">
+        <inbox-outlined />
+      </p>
+      <div class="ant-upload-text">点击或者拖拽文件到此处上传</div>
+    </a-upload-dragger>
+    <a-row justify="center" class="import-margin">
+      <a-checkbox v-model:checked="uploadRef.updateSupport"
+        >是否更新已经存在的用户数据
+      </a-checkbox>
+    </a-row>
+    <a-row justify="center" align="middle">
+      仅允许导入xls、xlsx格式文件。
+      <a-button type="link" @click="importTemplate">下载模板</a-button>
+    </a-row>
+  </a-modal>
 </template>
 <style lang="less" scoped>
 :deep(.ant-tree) {
@@ -495,5 +557,9 @@ onMounted(() => {
 
 .form-item-margin {
   margin: 24px 0;
+}
+
+.import-margin {
+  margin: 16px 0;
 }
 </style>
