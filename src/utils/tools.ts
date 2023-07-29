@@ -58,3 +58,8 @@ export function colorListClass(type: string): string {
 export function randomStr(): string {
   return (Math.random() + +new Date()).toString(36).slice(0, 8);
 }
+
+// 验证是否为blob格式
+export function blobValidate(data): boolean {
+  return data.type !== 'application/json';
+}

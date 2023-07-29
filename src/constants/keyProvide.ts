@@ -3,6 +3,8 @@
  * */
 
 export default {
+  // 下载
+  $download: Symbol('download'),
   // 获取dict 数据
   $getDict: Symbol('getDict'),
   // dict变量

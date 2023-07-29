@@ -2,6 +2,7 @@ import { type App, reactive } from 'vue';
 
 import { getType } from '@/apis/dicts/dict';
 import keyProvide from '@/constants/keyProvide';
+import { download } from '@/utils/request';
 
 /**
  * 全局的字典属性
@@ -32,7 +33,8 @@ export default {
         });
       });
     });
-
     app.provide(keyProvide.dictObjs, dictObjs);
+
+    app.provide(keyProvide.$download, download);
   }
 };

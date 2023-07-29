@@ -5,12 +5,13 @@ import axios, {
   type AxiosRequestConfig,
   type AxiosResponse
 } from 'axios';
+import { saveAs } from 'file-saver';
 
 import constants from '@/constants/constants';
 import errorCode from '@/utils/errorCode';
 import { getSItem, setSItem } from '@/utils/storeage';
 import { getToken } from '@/utils/token';
-import { transformParams } from '@/utils/tools';
+import { blobValidate, transformParams } from '@/utils/tools';
 
 export const isReLogin = { show: false };
 
@@ -177,5 +178,43 @@ service.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export function download(url, params, filename, config): Promise {
+  // const downloadLoadingInstance = Loading.service({
+  //   text: '正在下载数据，请稍候',
+  //   spinner: 'el-icon-loading',
+  //   background: 'rgba(0, 0, 0, 0.7)'
+  // });
+  return service
+    .post(url, params, {
+      transformRequest: [
+        (params) => {
+          return transformParams(params);
+        }
+      ],
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      responseType: 'blob',
+      ...config
+    })
+    .then(async (data) => {
+      const isBlob = blobValidate(data);
+      if (isBlob) {
+        const blob = new Blob([data]);
+        saveAs(blob, filename);
+      } else {
+        const resText = await data.text();
+        const rspObj = JSON.parse(resText);
+        const errMsg =
+          errorCode[rspObj.code] || rspObj.msg || errorCode.default;
+        void message.error(errMsg);
+      }
+      // downloadLoadingInstance.close();
+    })
+    .catch((r) => {
+      console.error(r);
+      void message.error('下载文件出现错误，请联系管理员！');
+      // downloadLoadingInstance.close();
+    });
+}
 
 export default service;
