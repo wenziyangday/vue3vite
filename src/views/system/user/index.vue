@@ -231,6 +231,9 @@ const rules = reactive({
   deptId: [{ required: true, message: '归属部门不能为空' }]
 });
 
+/**
+ * 获取用户角色，职位列表
+ * */
 const handleUserInfo = async (): void => {
   const { posts = [], roles = [] } = userInfo.value;
   if (posts.length === 0 || roles.length === 0) {
@@ -245,6 +248,7 @@ const handleUserInfo = async (): void => {
   }
 };
 
+// 表单事件操作
 const handleActionTables = (type: string, record?: unknown): void => {
   optType.value = type;
 
@@ -254,6 +258,7 @@ const handleActionTables = (type: string, record?: unknown): void => {
   }
 
   if (type === 'add') {
+    defaultValue.value = {};
     void vwFormRef.value?.resetFields();
   }
 
@@ -272,7 +277,6 @@ const modalOk = (): void => {
     const params = vwFormRef.value.formState;
     if (optType.value === 'edit') {
       params.userId = defaultValue.value.userId;
-      console.log(defaultValue.value, params);
       cb = updateUser;
     }
     cb(params).then(() => {
@@ -383,6 +387,7 @@ onMounted(() => {
     @ok="modalOk"
   >
     <v-w-form
+      v-if="open"
       ref="vwFormRef"
       :options="options"
       :rules="rules"
