@@ -51,3 +51,10 @@ export function colorListClass(type: string): string {
 
   return types[type] ?? '#ff17ef';
 }
+
+/**
+ * 生成随机数
+ * */
+export function randomStr(): string {
+  return (Math.random() + +new Date()).toString(36).slice(0, 8);
+}

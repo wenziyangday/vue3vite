@@ -5,6 +5,7 @@ import { computed, inject, reactive, ref } from 'vue';
 
 import keyProvide from '@/constants/keyProvide';
 import { type IOptSearch } from '@/types/opts';
+import { randomStr } from '@/utils/tools';
 
 const props = withDefaults(
   defineProps<{
@@ -27,6 +28,8 @@ const emit = defineEmits<{
   resetCb;
 }>();
 
+// formItem hash 为了避免表单出现id重复警告
+const idHash: string = randomStr();
 /**
  * form item wrapperCol = {span: wrapSpan}
  * */
@@ -118,7 +121,7 @@ const resetForm = (): void => {
       <a-col :span="colSpan" v-for="eInput in expandInputs" :key="eInput.label">
         <a-form-item
           :label="eInput.label"
-          :name="eInput.name"
+          :name="`${idHash}${eInput.name}`"
           class="form-item"
         >
           <a-range-picker
