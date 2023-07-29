@@ -29,17 +29,20 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
  * 表单值, 不进行结构初始化，重置会失败
  * */
 const defaultFormState = {};
-
 props.options.forEach((option) => {
   const key = option.name;
   defaultFormState[key] = null;
+
+  if (option.inputType === 'radio') {
+    defaultFormState[key] = '0';
+  }
 
   // 多选模式下 需要初始化为数组
   if (option.selectMode) {
     defaultFormState[key] = [];
   }
 });
-const formState = reactive(defaultFormState);
+const formState = reactive<Record<string, unknown>>(defaultFormState);
 /**
  * 下拉框的options
  * */
@@ -63,6 +66,13 @@ const { validate, validateInfos, resetFields } = useForm(
   formState,
   props.rules
 );
+
+// 抛出组件的属性和方法
+defineExpose({
+  validate,
+  resetFields,
+  formState
+});
 </script>
 
 <template>
@@ -70,7 +80,6 @@ const { validate, validateInfos, resetFields } = useForm(
     :model="formState"
     :label-col="{ span: props.labelSpan }"
     :wrapper-col="{ span: wrapSpan }"
-    :rules="rules"
   >
     <a-row :gutter="[16, 16]">
       <a-col
@@ -80,8 +89,8 @@ const { validate, validateInfos, resetFields } = useForm(
       >
         <a-form-item
           :label="option.label"
-          :name="option.name"
           class="form-item"
+          v-bind="validateInfos[option.name]"
         >
           <a-range-picker
             v-if="option.inputType === 'dateRangePicker'"
@@ -120,6 +129,12 @@ const { validate, validateInfos, resetFields } = useForm(
             :show-search="false"
             allow-clear
           />
+
+          <a-radio-group
+            v-else-if="option.inputType === 'radio'"
+            v-model:value="formState[option.name]"
+            :options="option.treeOptions ?? dictObjs[option.selectType]"
+          ></a-radio-group>
 
           <a-textarea
             v-else-if="option.inputType === 'textarea'"

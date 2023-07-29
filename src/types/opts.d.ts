@@ -50,6 +50,7 @@ type InputType =
   | 'input'
   | 'inputPassword'
   | 'textarea'
+  | 'radio'
   | 'select'
   | 'dateRangePicker'
   | 'datePicker'
