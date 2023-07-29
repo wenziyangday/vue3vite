@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { type TableColumnsType } from 'ant-design-vue';
-import { computed, inject, onBeforeMount, ref } from 'vue';
+import { computed, inject, onMounted, reactive, ref } from 'vue';
 
-import { deptTreeSelect, listUser } from '@/apis/system/user';
+import {
+  addUser,
+  deptTreeSelect,
+  getUser,
+  listUser,
+  updateUser
+} from '@/apis/system/user';
 import ActionTable from '@/components/action-table/ActionTable.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
-import Search from '@/components/search/Search.vue';
+import VWForm from '@/components/table/form/VWForm.vue';
+import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
-import { type IOptSearch } from '@/types/opts';
+import { type IFormItem, type IOptSearch } from '@/types/opts';
 
 /**
  * 全局获取字典值
  * */
 const dictInject = inject(keyProvide.$getDict);
-dictInject(['sys_notice_status']);
+dictInject(['sys_normal_disable']);
 const dictObjs = inject(keyProvide.dictObjs);
 
 /**
@@ -27,7 +34,7 @@ const searchOptions = ref<IOptSearch[]>([
     label: '状态',
     name: 'status',
     inputType: 'select',
-    selectType: 'sys_notice_status'
+    selectType: 'sys_normal_disable'
   },
   { label: '创建时间', name: 'createTime', inputType: 'dateRangePicker' }
 ]);
@@ -120,10 +127,12 @@ const handleTreeSelect = (selectedKeys): void => {
 const handleDeptTreeSelect = (): void => {
   deptTreeSelect().then((res) => {
     treeData.value = res.data;
+    const [gotIt] = options.value.filter((option) => option.name === 'deptId');
+    gotIt.treeOptions = res.data;
   });
 };
 
-// 重置表
+// 重置检索表单
 const resetCb = (): void => {
   filterTreeInput.value = null;
   formStatus.value = {};
@@ -131,7 +140,149 @@ const resetCb = (): void => {
   getList();
 };
 
-onBeforeMount(() => {
+// modal 新增
+const open = ref<boolean>(false);
+const title = ref<string>('添加用户');
+const userInfo = ref<{
+  posts: [];
+  roles: [];
+}>({});
+const vwFormRef = ref();
+const optType = ref<string>('add');
+const defaultValue = ref<Record<string, unknown>>({});
+const options = ref<IFormItem[]>([
+  {
+    label: '用户昵称',
+    name: 'nickName'
+  },
+  {
+    label: '归属部门',
+    name: 'deptId',
+    inputType: 'treeSelect',
+    treeOptions: [],
+    fieldNames: {
+      value: 'id',
+      label: 'label',
+      children: 'children'
+    }
+  },
+  {
+    label: '手机号码',
+    name: 'phonenumber'
+  },
+  {
+    label: '邮箱',
+    name: 'email'
+  },
+  {
+    label: '用户名称',
+    name: 'userName'
+  },
+  {
+    label: '用户密码',
+    name: 'password',
+    inputType: 'inputPassword'
+  },
+  {
+    label: '用户性别',
+    name: 'sex',
+    inputType: 'select',
+    selectType: 'sys_user_sex'
+  },
+  {
+    label: '状态',
+    name: 'status',
+    inputType: 'radio',
+    selectType: 'sys_normal_disable'
+  },
+  {
+    label: '岗位',
+    name: 'postIds',
+    inputType: 'select',
+    treeOptions: [],
+    selectMode: 'multiple',
+    fieldNames: {
+      value: 'postId',
+      label: 'postName',
+      children: 'children'
+    }
+  },
+  {
+    label: '角色',
+    name: 'roleIds',
+    inputType: 'select',
+    treeOptions: [],
+    selectMode: 'multiple',
+    fieldNames: {
+      value: 'roleId',
+      label: 'roleName',
+      children: 'children'
+    }
+  },
+  {
+    label: '备注',
+    name: 'remark',
+    inputType: 'textarea'
+  }
+]);
+
+const rules = reactive({
+  nickName: [{ required: true, message: '用户昵称不能为空' }],
+  deptId: [{ required: true, message: '归属部门不能为空' }]
+});
+
+const handleUserInfo = async (): void => {
+  const { posts = [], roles = [] } = userInfo.value;
+  if (posts.length === 0 || roles.length === 0) {
+    const res = await getUser('');
+    userInfo.value.posts = res.posts;
+    userInfo.value.roles = res.roles;
+    const [gotItPost, gotItRole] = options.value.filter(
+      (option) => option.name === 'postIds' || option.name === 'roleIds'
+    );
+    gotItPost.treeOptions = res.posts;
+    gotItRole.treeOptions = res.roles;
+  }
+};
+
+const handleActionTables = (type: string, record?: unknown): void => {
+  optType.value = type;
+
+  if (type === 'add' || type === 'edit') {
+    open.value = true;
+    handleUserInfo();
+  }
+
+  if (type === 'add') {
+    void vwFormRef.value?.resetFields();
+  }
+
+  if (type === 'edit') {
+    // 设置一个default props
+    defaultValue.value = record;
+  }
+};
+
+/**
+ * 新增/修改提交
+ * */
+const modalOk = (): void => {
+  void vwFormRef.value?.validate().then(() => {
+    let cb = addUser;
+    const params = vwFormRef.value.formState;
+    if (optType.value === 'edit') {
+      params.userId = defaultValue.value.userId;
+      console.log(defaultValue.value, params);
+      cb = updateUser;
+    }
+    cb(params).then(() => {
+      open.value = false;
+      getList();
+    });
+  });
+};
+
+onMounted(() => {
   handleDeptTreeSelect();
 });
 </script>
@@ -183,6 +334,7 @@ onBeforeMount(() => {
             :options="['add', 'delete', 'import', 'export']"
             :row-gutter="16"
             :dropdown-length="4"
+            @click-cb="handleActionTables"
           />
         </a-col>
       </a-row>
@@ -214,7 +366,7 @@ onBeforeMount(() => {
               :options="['edit', 'delete', 'resetPassword', 'assignRoles']"
               @click-cb="
                 (type) => {
-                  handleActionsTable(type, { ...record, index: index + 1 });
+                  handleActionTables(type, { ...record, index: index + 1 });
                 }
               "
             />
@@ -223,18 +375,28 @@ onBeforeMount(() => {
       </a-table>
     </a-col>
   </a-row>
+  <a-modal
+    v-model:open="open"
+    :title="title"
+    closable
+    :width="600"
+    @ok="modalOk"
+  >
+    <v-w-form
+      ref="vwFormRef"
+      :options="options"
+      :rules="rules"
+      :default-value="defaultValue"
+    />
+  </a-modal>
 </template>
 <style lang="less" scoped>
 :deep(.ant-tree) {
   background: none;
 }
 
-:deep {
-  .filter-node {
-    .ant-tree-title {
-      color: @colorPrimary !important;
-    }
-  }
+:deep(.filter-node .ant-tree-title) {
+  color: @colorPrimary !important;
 }
 
 .form-item-margin {
