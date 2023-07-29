@@ -162,6 +162,15 @@ service.interceptors.response.use(
       });
       return Promise.reject(new Error('error'));
     } else {
+      if (
+        response.config.method?.toLocaleLowerCase() === 'post' ||
+        response.config.method?.toLocaleLowerCase() === 'put'
+      ) {
+        void message.success('操作成功！');
+      }
+      if (response.config.method?.toLocaleLowerCase() === 'delete') {
+        void message.success('删除成功！');
+      }
       return response.data;
     }
   },
