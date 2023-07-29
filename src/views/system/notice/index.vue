@@ -12,7 +12,7 @@ import {
 import ActionTable from '@/components/action-table/ActionTable.vue';
 import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
-import Search from '@/components/search/Search.vue';
+import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IOptSearch } from '@/types/opts';
