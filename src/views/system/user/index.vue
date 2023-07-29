@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { type TableColumnsType } from 'ant-design-vue';
-import { computed, inject, onMounted, reactive, ref } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { message, Modal, type TableColumnsType } from 'ant-design-vue';
+import {
+  computed,
+  createVNode,
+  h,
+  inject,
+  onMounted,
+  reactive,
+  ref
+} from 'vue';
 
 import {
   addUser,
+  delUser,
   deptTreeSelect,
   getUser,
   listUser,
   updateUser
 } from '@/apis/system/user';
 import ActionTable from '@/components/action-table/ActionTable.vue';
+import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
 import VWForm from '@/components/table/form/VWForm.vue';
 import Search from '@/components/table/search/Search.vue';
@@ -18,11 +29,12 @@ import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IFormItem, type IOptSearch } from '@/types/opts';
 
 /**
- * 全局获取字典值
+ * 全局方法使用
  * */
 const dictInject = inject(keyProvide.$getDict);
 dictInject(['sys_normal_disable']);
 const dictObjs = inject(keyProvide.dictObjs);
+const download = inject(keyProvide.$download);
 
 /**
  * 检索 配置
@@ -150,7 +162,7 @@ const userInfo = ref<{
 const vwFormRef = ref();
 const optType = ref<string>('add');
 const defaultValue = ref<Record<string, unknown>>({});
-const options = ref<IFormItem[]>([
+const defaultOptions: [] = [
   {
     label: '用户昵称',
     name: 'nickName'
@@ -224,11 +236,38 @@ const options = ref<IFormItem[]>([
     name: 'remark',
     inputType: 'textarea'
   }
-]);
-
+];
+const options = ref<IFormItem[]>(defaultOptions);
 const rules = reactive({
+  userName: [
+    { required: true, message: '用户名称不能为空' },
+    {
+      min: 2,
+      max: 20,
+      message: '用户名称长度必须介于 2 和 20 之间'
+    }
+  ],
   nickName: [{ required: true, message: '用户昵称不能为空' }],
-  deptId: [{ required: true, message: '归属部门不能为空' }]
+  password: [
+    { required: true, message: '用户密码不能为空' },
+    {
+      min: 5,
+      max: 20,
+      message: '用户密码长度必须介于 5 和 20 之间'
+    }
+  ],
+  email: [
+    {
+      type: 'email',
+      message: '请输入正确的邮箱地址'
+    }
+  ],
+  phonenumber: [
+    {
+      pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+      message: '请输入正确的手机号码'
+    }
+  ]
 });
 
 /**
@@ -249,22 +288,72 @@ const handleUserInfo = async (): void => {
 };
 
 // 表单事件操作
-const handleActionTables = (type: string, record?: unknown): void => {
+const handleActionTables = (type: string, record?: unknown = {}): void => {
   optType.value = type;
-
   if (type === 'add' || type === 'edit') {
-    open.value = true;
     handleUserInfo();
   }
-
   if (type === 'add') {
     defaultValue.value = {};
+    options.value = defaultOptions;
+    open.value = true;
     void vwFormRef.value?.resetFields();
   }
 
   if (type === 'edit') {
-    // 设置一个default props
-    defaultValue.value = record;
+    // 隐藏值
+    options.value = options.value.filter(
+      (option) => option.name !== 'password'
+    );
+    const { userId } = record;
+    getUser(userId).then((res) => {
+      // 设置一个default props
+      defaultValue.value = record;
+      defaultValue.value.roleIds = res.roleIds;
+      defaultValue.value.postIds = res.postIds;
+      console.log(defaultValue.value);
+      open.value = true;
+    });
+  }
+
+  if (type === 'delete') {
+    let { userId, index } = record;
+
+    if (!userId) {
+      if (rowKeys.value.length === 0) {
+        void message.warning('请选中至少一条数据进行操作');
+        return;
+      }
+      userId = rowKeys.value.join(',');
+    }
+    Modal.confirm({
+      title: '系统提示',
+      closable: true,
+      icon: () => {},
+      content: h('div', [
+        createVNode(ExclamationCircleOutlined),
+        createVNode(ConfirmContent, {
+          msg: `${index ?? '多条'}`,
+          icon: 'delete-outlined'
+        })
+      ]),
+      okText: '确认',
+      onOk: () => {
+        delUser(userId).then(() => {
+          getList();
+        });
+      }
+    });
+  }
+
+  if (type === 'export') {
+    download(
+      'system/user/export',
+      {
+        ...formStatus
+      },
+      `user_${+new Date()}.xlsx`
+    );
   }
 };
 
