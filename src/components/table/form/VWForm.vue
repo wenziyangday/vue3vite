@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form } from 'ant-design-vue';
-import { computed, inject, reactive } from 'vue';
+import { computed, inject, onMounted, reactive, ref } from 'vue';
 
 import keyProvide from '@/constants/keyProvide';
 import { type IFormItem } from '@/types/opts';
@@ -13,10 +13,13 @@ const props = withDefaults(
     options?: IFormItem[];
     // 表单校验规则
     rules: Record<string, unknown>;
+    // 默认值
+    defaultValue?: Record<string, unknown>;
   }>(),
   {
     labelSpan: 6,
-    options: () => []
+    options: () => [],
+    defaultValue: () => {}
   }
 );
 
@@ -28,21 +31,50 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
 /**
  * 表单值, 不进行结构初始化，重置会失败
  * */
-const defaultFormState = {};
-props.options.forEach((option) => {
-  const key = option.name;
-  defaultFormState[key] = null;
 
-  if (option.inputType === 'radio') {
-    defaultFormState[key] = '0';
-  }
+const defaultState = {};
+const keys = Object.keys(props.defaultValue);
+if (keys.length === 0) {
+  props.options.forEach((option) => {
+    const key = option.name;
+    defaultState[key] = null;
 
-  // 多选模式下 需要初始化为数组
-  if (option.selectMode) {
-    defaultFormState[key] = [];
-  }
-});
-const formState = reactive<Record<string, unknown>>(defaultFormState);
+    if (option.inputType === 'radio') {
+      defaultState[key] = '0';
+    }
+
+    // 多选模式下 需要初始化为数组
+    if (option.selectMode) {
+      defaultState[key] = [];
+    }
+  });
+} else {
+  const defaultValueKeys = Object.keys(props.defaultValue);
+  const optionsEntries = Object.fromEntries(
+    props.options.map((option) => [option.name, option])
+  );
+
+  defaultValueKeys.forEach((key) => {
+    if (optionsEntries[key]) {
+      if (props.defaultValue[key]) {
+        defaultState[key] = props.defaultValue[key];
+      } else {
+        defaultState[key] = null;
+
+        if (optionsEntries[key]?.inputType === 'radio') {
+          defaultState[key] = '0';
+        }
+
+        // 多选模式下 需要初始化为数组
+        if (optionsEntries[key]?.selectMode) {
+          defaultState[key] = [];
+        }
+      }
+    }
+  });
+}
+
+const formState = ref<Record<string, unknown>>(defaultState);
 /**
  * 下拉框的options
  * */
@@ -78,7 +110,7 @@ defineExpose({
 <template>
   <a-form
     :model="formState"
-    :label-col="{ span: props.labelSpan }"
+    :label-col="{ span: labelSpan }"
     :wrapper-col="{ span: wrapSpan }"
   >
     <a-row :gutter="[16, 16]">
@@ -90,7 +122,7 @@ defineExpose({
         <a-form-item
           :label="option.label"
           class="form-item"
-          v-bind="validateInfos[option.name]"
+          v-bind="validateInfos?.[option.name]"
         >
           <a-range-picker
             v-if="option.inputType === 'dateRangePicker'"
