@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form } from 'ant-design-vue';
-import { computed, inject, onMounted, reactive, ref } from 'vue';
+import { computed, inject, reactive, ref } from 'vue';
 
 import keyProvide from '@/constants/keyProvide';
 import { type IFormItem } from '@/types/opts';
@@ -9,15 +9,18 @@ const props = withDefaults(
   defineProps<{
     // form item labelCol = {span: labelSpan}
     labelSpan?: number;
+    // row 几等分
+    bisection?: 1 | 2 | 3 | 4 | 12;
     // form表单
     options?: IFormItem[];
     // 表单校验规则
-    rules: Record<string, unknown>;
+    rules?: Record<string, unknown>;
     // 默认值
     defaultValue?: Record<string, unknown>;
   }>(),
   {
     labelSpan: 6,
+    bisection: 2,
     options: () => [],
     defaultValue: () => {}
   }
@@ -33,7 +36,7 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
  * */
 
 const defaultState = {};
-const keys = Object.keys(props.defaultValue);
+const keys = Object.keys(props.defaultValue ?? {});
 if (keys.length === 0) {
   props.options.forEach((option) => {
     const key = option.name;
@@ -99,6 +102,33 @@ const { validate, validateInfos, resetFields } = useForm(
   props.rules
 );
 
+const handleBisection = (bisection?: number): number => {
+  if (!bisection) {
+    bisection = props.bisection;
+  }
+  return 24 / bisection;
+};
+
+const handleBind = (option: IFormItem): unknown => {
+  let labelSpan = props.labelSpan;
+  let contentSpan = wrapSpan;
+
+  if (option.bisection) {
+    labelSpan = props.labelSpan / props.bisection;
+    contentSpan = computed(() => 24 - labelSpan);
+  }
+
+  return {
+    labelCol: {
+      span: labelSpan
+    },
+    wrapperCol: {
+      span: contentSpan.value
+    },
+    ...validateInfos?.[option.name]
+  };
+};
+
 // 抛出组件的属性和方法
 defineExpose({
   validate,
@@ -108,21 +138,17 @@ defineExpose({
 </script>
 
 <template>
-  <a-form
-    :model="formState"
-    :label-col="{ span: labelSpan }"
-    :wrapper-col="{ span: wrapSpan }"
-  >
+  <a-form :model="formState">
     <a-row :gutter="[16, 16]">
       <a-col
         v-for="option in options"
         :key="option.name"
-        :span="option.colSpan ?? 12"
+        :span="handleBisection(option.bisection)"
       >
         <a-form-item
           :label="option.label"
           class="form-item"
-          v-bind="validateInfos?.[option.name]"
+          v-bind="handleBind(option)"
         >
           <a-range-picker
             v-if="option.inputType === 'dateRangePicker'"

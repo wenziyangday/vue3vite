@@ -85,7 +85,8 @@ export interface IFormItem {
   selectType?: string;
   // select Mode
   selectMode?: 'multiple' | 'tags' | 'combobox';
-  colSpan?: number;
+  // 等分
+  bisection?: 1 | 2;
   // 树形选择器的数据值
   treeOptions?: unknown[];
   // 处理属性字段对应问题
