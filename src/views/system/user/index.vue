@@ -22,6 +22,7 @@ import {
   deptTreeSelect,
   getUser,
   listUser,
+  resetUserPwd,
   updateUser
 } from '@/apis/system/user';
 import ActionTable from '@/components/action-table/ActionTable.vue';
@@ -32,7 +33,7 @@ import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useImport from '@/plugins/hooks/useImport';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
-import { type IFormItem, type IOptSearch } from '@/types/opts';
+import { type IFormItem, type IOptSearch, type OptType } from '@/types/opts';
 
 /**
  * 全局方法使用
@@ -276,6 +277,7 @@ const rules = reactive({
     }
   ]
 });
+const curUserInfo = ref<any>({});
 
 /**
  * 获取用户角色，职位列表
@@ -295,7 +297,7 @@ const handleUserInfo = async (): void => {
 };
 
 // 表单事件操作
-const handleActionTables = (type: string, record?: unknown = {}): void => {
+const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   optType.value = type;
   if (type === 'add' || type === 'edit') {
     handleUserInfo();
@@ -367,6 +369,11 @@ const handleActionTables = (type: string, record?: unknown = {}): void => {
   if (type === 'import') {
     uploadRef.value.isOpen = true;
   }
+
+  if (type === 'resetPassword') {
+    resetPasswordRef.value = true;
+    curUserInfo.value = record;
+  }
 };
 
 /**
@@ -410,6 +417,26 @@ const importTemplate = (): void => {
     {},
     `user_template_${+new Date()}.xlsx`
   );
+};
+
+const resetPasswordRef = ref<boolean>(false);
+const resetOptions: IFormItem[] = [
+  {
+    label: '',
+    name: 'password',
+    inputType: 'inputPassword',
+    bisection: 1
+  }
+];
+
+const resetRef = ref();
+const modalResetOk = (): void => {
+  resetUserPwd(
+    curUserInfo.value.userId,
+    resetRef.value.formState.password
+  ).then(() => {
+    resetPasswordRef.value = false;
+  });
 };
 
 onMounted(() => {
@@ -486,7 +513,7 @@ onMounted(() => {
             >{{ index + 1 }}
           </template>
           <template v-if="column.dataIndex === 'status'">
-            <dict-tag :value="text" :options="dictObjs['sys_notice_status']" />
+            <dict-tag :value="text" :options="dictObjs['sys_normal_disable']" />
           </template>
           <template v-if="column.dataIndex === 'action'">
             <action-table
@@ -546,6 +573,13 @@ onMounted(() => {
       <a-button type="link" @click="importTemplate">下载模板</a-button>
     </a-row>
   </a-modal>
+  <a-modal v-model:open="resetPasswordRef" title="提示" @ok="modalResetOk">
+    <div class="reset-bottom">
+      请输入"<span>{{ curUserInfo?.userName }}</span
+      >"的新密码
+    </div>
+    <v-w-form v-if="resetPasswordRef" ref="resetRef" :options="resetOptions" />
+  </a-modal>
 </template>
 <style lang="less" scoped>
 :deep(.ant-tree) {
@@ -562,5 +596,13 @@ onMounted(() => {
 
 .import-margin {
   margin: 16px 0;
+}
+
+.reset-bottom {
+  margin-bottom: 10px;
+
+  span {
+    color: @colorPrimary;
+  }
 }
 </style>
