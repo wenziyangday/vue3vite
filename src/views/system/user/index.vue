@@ -240,7 +240,8 @@ const defaultOptions: [] = [
   {
     label: '备注',
     name: 'remark',
-    inputType: 'textarea'
+    inputType: 'textarea',
+    bisection: 1
   }
 ];
 const options = ref<IFormItem[]>(defaultOptions);
