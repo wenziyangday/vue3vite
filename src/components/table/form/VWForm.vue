@@ -102,6 +102,7 @@ const { validate, validateInfos, resetFields } = useForm(
   props.rules
 );
 
+// 等分处理
 const handleBisection = (bisection?: number): number => {
   if (!bisection) {
     bisection = props.bisection;
@@ -109,11 +110,15 @@ const handleBisection = (bisection?: number): number => {
   return 24 / bisection;
 };
 
+// 绑定处理
 const handleBind = (option: IFormItem): unknown => {
   let labelSpan = props.labelSpan;
   let contentSpan = wrapSpan;
 
-  if (option.bisection) {
+  if (!option.label) {
+    labelSpan = 0;
+    contentSpan = 24;
+  } else if (option.bisection) {
     labelSpan = props.labelSpan / props.bisection;
     contentSpan = computed(() => 24 - labelSpan);
   }
