@@ -9,7 +9,9 @@ export enum OptTypeEnum {
   'export',
   'import',
   'resetPassword',
-  'assignRoles'
+  'assignRoles',
+  'dataRights',
+  'assignUsers'
 }
 
 export type OptType =
@@ -20,7 +22,9 @@ export type OptType =
   | 'export'
   | 'import'
   | 'resetPassword'
-  | 'assignRoles';
+  | 'assignRoles'
+  | 'dataRights'
+  | 'assignUsers';
 
 export enum OptTypeCNEnum {
   '新增',
@@ -30,7 +34,9 @@ export enum OptTypeCNEnum {
   '导出',
   '导入',
   '重置密码',
-  '分配角色'
+  '分配角色',
+  '数据权限',
+  '分配用户'
 }
 
 export type OptTypeCN =
@@ -41,7 +47,9 @@ export type OptTypeCN =
   | '导出'
   | '导入'
   | '重置密码'
-  | '分配角色';
+  | '分配角色'
+  | '数据权限'
+  | '分配用户';
 
 /**
  * 搜索相关的类型

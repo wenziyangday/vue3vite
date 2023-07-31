@@ -56,5 +56,15 @@ export const opts: IOpt[] = [
     type: 'assignRoles',
     label: '分配角色',
     icon: 'sisternode-outlined'
+  },
+  {
+    type: 'dataRights',
+    label: '数据权限',
+    icon: 'database-outlined'
+  },
+  {
+    type: 'assignUsers',
+    label: '分配用户',
+    icon: 'usergroup-add-outlined'
   }
 ];
