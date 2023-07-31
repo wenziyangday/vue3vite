@@ -1,6 +1,12 @@
 import { onMounted, ref } from 'vue';
 
-const useTableRequest = function (requestCb: Promise): unknown {
+const useTableRequest = function (
+  requestCb?: Promise,
+  listKey?: string
+): unknown {
+  if (!listKey) {
+    listKey = 'rows';
+  }
   // 网络请求响应数据
   const dataSource: [] = ref([]);
   // 表格多选勾选项
@@ -31,7 +37,7 @@ const useTableRequest = function (requestCb: Promise): unknown {
       pageSize,
       ...formStatus.value
     }).then((res) => {
-      dataSource.value = res.rows;
+      dataSource.value = res[listKey];
       paginationIndicator.value.total = res.total;
     });
   };
@@ -49,7 +55,7 @@ const useTableRequest = function (requestCb: Promise): unknown {
   };
 
   onMounted(() => {
-    getList();
+    requestCb && getList();
   });
 
   return {

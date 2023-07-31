@@ -1,3 +1,4 @@
+<!--form子组件初始化值时 存在时序问题-->
 <script setup lang="ts">
 import { Form } from 'ant-design-vue';
 import { computed, inject, reactive, ref } from 'vue';
@@ -17,15 +18,17 @@ const props = withDefaults(
     rules?: Record<string, unknown>;
     // 默认值
     defaultValue?: Record<string, unknown>;
+    // 表单是否可操作
+    disabled?: boolean;
   }>(),
   {
     labelSpan: 6,
     bisection: 2,
+    disabled: false,
     options: () => [],
     defaultValue: () => {}
   }
 );
-
 /**
  * form item wrapperCol = {span: wrapSpan}
  * */
@@ -158,6 +161,7 @@ defineExpose({
           <a-range-picker
             v-if="option.inputType === 'dateRangePicker'"
             v-model:value="formState[option.name]"
+            :disabled="disabled"
             style="width: 100%"
             allow-clear
           />
@@ -165,6 +169,7 @@ defineExpose({
           <a-date-picker
             v-else-if="option.inputType === 'datePicker'"
             v-model:value="formState[option.name]"
+            :disabled="disabled"
             style="width: 100%"
             allow-clear
           />
@@ -175,6 +180,7 @@ defineExpose({
             :tree-data="option.treeOptions"
             :field-names="option.fieldNames"
             :placeholder="`请选择${option.label}`"
+            :disabled="disabled"
             tree-default-expand-all
             style="width: 100%"
             allow-clear
@@ -187,6 +193,7 @@ defineExpose({
             :field-names="option.fieldNames"
             v-model:value="formState[option.name]"
             :placeholder="`请选择${option.label}`"
+            :disabled="disabled"
             style="width: 100%"
             show-arrow
             :show-search="false"
@@ -197,12 +204,14 @@ defineExpose({
             v-else-if="option.inputType === 'radio'"
             v-model:value="formState[option.name]"
             :options="option.treeOptions ?? dictObjs[option.selectType]"
-          ></a-radio-group>
+            :disabled="disabled"
+          />
 
           <a-textarea
             v-else-if="option.inputType === 'textarea'"
             v-model:value="formState[option.name]"
             :placeholder="`请输入${option.label}`"
+            :disabled="disabled"
             style="width: 100%"
             allow-clear
           />
@@ -211,6 +220,7 @@ defineExpose({
             v-else-if="option.inputType === 'inputPassword'"
             v-model:value="formState[option.name]"
             :placeholder="`请输入${option.label}`"
+            :disabled="disabled"
             style="width: 100%"
             allow-clear
             autocomplete
@@ -220,6 +230,7 @@ defineExpose({
             v-else
             v-model:value="formState[option.name]"
             :placeholder="`请输入${option.label}`"
+            :disabled="disabled"
             style="width: 100%"
             allow-clear
           />
