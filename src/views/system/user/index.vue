@@ -15,6 +15,7 @@ import {
   reactive,
   ref
 } from 'vue';
+import { useRouter } from 'vue-router';
 
 import {
   addUser,
@@ -296,6 +297,8 @@ const handleUserInfo = async (): void => {
   }
 };
 
+const router = useRouter();
+
 // 表单事件操作
 const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   optType.value = type;
@@ -373,6 +376,10 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   if (type === 'resetPassword') {
     resetPasswordRef.value = true;
     curUserInfo.value = record;
+  }
+
+  if (type === 'assignRoles') {
+    void router.push(`/system/user-auth/role/${record.userId}`);
   }
 };
 

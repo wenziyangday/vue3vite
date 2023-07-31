@@ -97,6 +97,20 @@ export const constantRoutes = [
     },
     hidden: true,
     component: () => import('@/views/error/404.vue') // 切记不要使用 redirect: '/403',
+  },
+  {
+    path: '/system/user-auth',
+    component: () => import('@/views/layout/layout'),
+    hidden: true,
+    permissions: ['system:user:edit'],
+    children: [
+      {
+        path: 'role/:userId(\\d+)',
+        component: () => import('@/views/system/user/authRole'),
+        name: 'AuthRole',
+        meta: { title: '分配角色', activeMenu: '/system/user' }
+      }
+    ]
   }
 ];
 
