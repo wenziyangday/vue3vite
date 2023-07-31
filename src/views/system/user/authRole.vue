@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { message, type TableColumnsType } from 'ant-design-vue';
-import { computed, onMounted, onUpdated, ref } from 'vue';
+import { type TableColumnsType } from 'ant-design-vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getAuthRole, updateAuthRole } from '@/apis/system/user';
