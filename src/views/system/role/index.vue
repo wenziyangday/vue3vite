@@ -3,8 +3,16 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal, type TableColumnsType } from 'ant-design-vue';
 import { computed, createVNode, h, inject, onMounted, ref } from 'vue';
 
-import { treeSelect } from '@/apis/system/menu';
-import { addRole, delRole, listRole, updateRole } from '@/apis/system/role';
+import { roleMenuTreeselect, treeSelect } from '@/apis/system/menu';
+import {
+  addRole,
+  dataScope,
+  delRole,
+  deptTreeSelect,
+  getRole,
+  listRole,
+  updateRole
+} from '@/apis/system/role';
 import ActionTable from '@/components/action-table/ActionTable.vue';
 import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
@@ -107,10 +115,20 @@ const resetCb = (): void => {
 // 表单事件操作
 const optType = ref<OptType>('add');
 const defaultValue = ref<unknown>({});
-const handleActionTables = (type: OptType, record?: unknown = {}): void => {
-  console.log(record, 'record');
+const handleActionTables = async (
+  type: OptType,
+  record?: unknown = {}
+): void => {
   optType.value = type;
   if (type === 'add') {
+    titleRef.value = '新增角色';
+    // 新增初始化 add 权限树
+    const [gotIt] = options.value.filter(
+      (option) => option.inputType === 'treeCheck'
+    );
+    gotIt.treeOptions = defaultTreeOption.value;
+
+    // 重置基础数据
     defaultValue.value = {};
     options.value = defaultOptions;
     open.value = true;
@@ -118,9 +136,13 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   }
 
   if (type === 'edit') {
-    defaultValue.value = record;
-    open.value = true;
-    void vwFormRef.value?.resetFields();
+    titleRef.value = '修改角色';
+    await getRoleMenuTreeSelect(record.roleId);
+    getRole(record.roleId).then((res) => {
+      defaultValue.value = { ...res.data, ...defaultValue.value };
+      open.value = true;
+      void vwFormRef.value?.resetFields();
+    });
   }
 
   if (type === 'delete') {
@@ -162,11 +184,24 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
       `role_${+new Date()}.xlsx`
     );
   }
+
+  if (type === 'dataRights') {
+    titleRef.value = '分配数据权限';
+    dictInject(['sys_rights_scope']);
+    defaultValue.value = record;
+    await handleDataScope(record);
+    const { roleId } = record;
+    defaultValue.value.roleId = roleId;
+    open.value = true;
+  }
 };
 
 // modal 数据
 const vwFormRef = ref();
+const titleRef = ref('新增角色');
+const defaultTreeOption = ref([]);
 const open = ref<boolean>(false);
+// 新增角色数据结构
 const defaultOptions: IFormItem[] = [
   {
     label: '角色名称',
@@ -212,13 +247,66 @@ const rules = ref({
   roleKey: [{ required: true, message: '权限字符不能为空' }],
   roleSort: [{ required: true, message: '角色顺序不能为空' }]
 });
+// 数据权限分配
+const dataRights = ref<IFormItem[]>([
+  {
+    label: '角色名称',
+    name: 'roleName',
+    disabled: true
+  },
+  {
+    label: '权限字符',
+    name: 'roleKey',
+    disabled: true
+  },
+  {
+    label: '权限范围',
+    name: 'dataScope',
+    inputType: 'select',
+    selectType: 'sys_rights_scope'
+  },
+  {
+    label: '数据权限',
+    name: 'deptIds',
+    inputType: 'treeCheck',
+    fieldNames: {
+      title: 'label',
+      key: 'id',
+      children: 'children'
+    },
+    treeOptions: [],
+    bisection: 1,
+    relationShow: ['dataScope', '2']
+  }
+]);
 
 const handleMenuTree = (): void => {
   treeSelect().then((res) => {
+    defaultTreeOption.value = res.data;
+  });
+};
+
+/** 根据角色ID查询菜单树结构 */
+const getRoleMenuTreeSelect = (roleId): Promise => {
+  return roleMenuTreeselect(roleId).then((res) => {
     const [gotIt] = options.value.filter(
       (option) => option.inputType === 'treeCheck'
     );
-    gotIt.treeOptions = res.data;
+    gotIt.treeOptions = res.menus;
+    defaultValue.value.menuIds = res.checkedKeys ?? [];
+    return res;
+  });
+};
+
+// 获取部门
+const handleDataScope = (row): Promise => {
+  return deptTreeSelect(row.roleId).then((res) => {
+    const [gotIt] = dataRights.value.filter(
+      (option) => option.inputType === 'treeCheck'
+    );
+    gotIt.treeOptions = res.depts;
+    defaultValue.value.deptIds = res.checkedKeys ?? [];
+    return res;
   });
 };
 
@@ -232,6 +320,11 @@ const modalOk = (): void => {
     if (optType.value === 'edit') {
       params.roleId = defaultValue.value.roleId;
       cb = updateRole;
+    }
+
+    if (optType.value === 'dataRights') {
+      params.roleId = defaultValue.value.roleId;
+      cb = dataScope;
     }
     cb(params).then(() => {
       open.value = false;
@@ -290,12 +383,19 @@ onMounted(() => {
       </template>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="新增角色" :width="600" @ok="modalOk">
+  {{ formStatus }}
+  <a-modal v-model:open="open" :title="titleRef" :width="600" @ok="modalOk">
     <v-w-form
       ref="vwFormRef"
-      v-if="open"
+      v-if="open && ['edit', 'add'].includes(optType)"
       :options="options"
       :rules="rules"
+      :default-value="defaultValue"
+    />
+    <v-w-form
+      ref="vwFormRef"
+      :options="dataRights"
+      v-if="open && optType === 'dataRights'"
       :default-value="defaultValue"
     />
   </a-modal>
