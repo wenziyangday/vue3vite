@@ -1,7 +1,7 @@
 <!--form子组件初始化值时 存在时序问题-->
 <script setup lang="ts">
 import { Form } from 'ant-design-vue';
-import { computed, inject, reactive, ref } from 'vue';
+import { computed, inject, reactive, ref, watch } from 'vue';
 
 import keyProvide from '@/constants/keyProvide';
 import { type IFormItem } from '@/types/opts';
@@ -18,7 +18,7 @@ const props = withDefaults(
     rules?: Record<string, unknown>;
     // 默认值
     defaultValue?: Record<string, unknown>;
-    // 表单是否可操作
+    // 表单是否可操作（整体操作）
     disabled?: boolean;
   }>(),
   {
@@ -159,7 +159,7 @@ const treeCheckOptions = [
 const checkboxVal = reactive(['linkage']);
 const checkStrictly = ref<boolean>(false);
 
-// 这个地方还是有点问题
+// @wenTODO 这个地方还是有点问题 展开和不展开（取第一层或者第二层）
 const handleCheckboxChange = (checkedValue): void => {
   if (checkedValue.includes('expandUnfold')) {
     expandedKeys.value = [1, 100];
@@ -174,6 +174,45 @@ const handleCheckboxChange = (checkedValue): void => {
   checkStrictly.value = !checkedValue.includes('linkage');
 };
 
+const relationShow = ref<IFormItem[]>([]);
+
+// 关联数据显隐
+const handelRelationShow = (option: IFormItem): boolean => {
+  if (!option?.relationShow) {
+    return true;
+  }
+  if (
+    Array.isArray(option?.relationShow) &&
+    option?.relationShow.length === 2
+  ) {
+    if (!relationShow.value.some((rs) => rs.name === option.name)) {
+      relationShow.value.push(option);
+    }
+    const [key, val] = option?.relationShow;
+    return formState.value[key] === val;
+  }
+
+  return false;
+};
+
+// 处理切换重置数据
+watch(
+  formState,
+  () => {
+    // @wenTODO 之后需要判断变化的是那个字段，然后重置多个字段
+    relationShow.value.forEach((option) => {
+      if (option?.treeOptions?.length > 0 && option?.relationShow?.length > 0) {
+        formState.value[option.name] = [];
+      } else {
+        formState.value[option.name] = '';
+      }
+    });
+  },
+  {
+    deep: true
+  }
+);
+
 // 抛出组件的属性和方法
 defineExpose({
   validate,
@@ -183,125 +222,127 @@ defineExpose({
 </script>
 
 <template>
-  <a-form :model="formState">
+  <a-form :model="formState" :disabled="disabled">
     <a-row :gutter="[16, 16]">
-      <a-col
-        v-for="option in options"
-        :key="option.name"
-        :span="handleBisection(option.bisection)"
-      >
-        <a-form-item
-          :label="option.label"
-          class="form-item"
-          v-bind="handleBind(option)"
+      <template v-for="option in options">
+        <a-col
+          :key="option.name"
+          :span="handleBisection(option.bisection)"
+          v-if="handelRelationShow(option)"
         >
-          <a-range-picker
-            v-if="option.inputType === 'dateRangePicker'"
-            v-model:value="formState[option.name]"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-          />
-
-          <a-date-picker
-            v-else-if="option.inputType === 'datePicker'"
-            v-model:value="formState[option.name]"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-          />
-
-          <a-tree-select
-            v-else-if="option.inputType === 'treeSelect'"
-            v-model:value="formState[option.name]"
-            :tree-data="option.treeOptions"
-            :field-names="option.fieldNames"
-            :placeholder="`请选择${option.label}`"
-            :disabled="disabled"
-            tree-default-expand-all
-            style="width: 100%"
-            allow-clear
-          />
-
-          <a-select
-            v-else-if="option.inputType === 'select'"
-            :mode="option.selectMode"
-            :options="option.treeOptions ?? dictObjs[option.selectType]"
-            :field-names="option.fieldNames"
-            v-model:value="formState[option.name]"
-            :placeholder="`请选择${option.label}`"
-            :disabled="disabled"
-            style="width: 100%"
-            show-arrow
-            :show-search="false"
-            allow-clear
-          />
-
-          <a-radio-group
-            v-else-if="option.inputType === 'radio'"
-            v-model:value="formState[option.name]"
-            :options="option.treeOptions ?? dictObjs[option.selectType]"
-            :disabled="disabled"
-          />
-
-          <template v-else-if="option.inputType === 'treeCheck'">
-            <a-checkbox-group
-              class="checkbox-margin"
-              v-model:value="checkboxVal"
-              :options="treeCheckOptions"
-              @change="handleCheckboxChange"
+          <a-form-item
+            :label="option.label"
+            class="form-item"
+            v-bind="handleBind(option)"
+          >
+            <a-range-picker
+              v-if="option.inputType === 'dateRangePicker'"
+              v-model:value="formState[option.name]"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
             />
-            <a-tree
-              class="tree-wrap"
-              :tree-data="option.treeOptions ?? dictObjs[option.selectType]"
+
+            <a-date-picker
+              v-else-if="option.inputType === 'datePicker'"
+              v-model:value="formState[option.name]"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
+            />
+
+            <a-tree-select
+              v-else-if="option.inputType === 'treeSelect'"
+              v-model:value="formState[option.name]"
+              :tree-data="option.treeOptions"
               :field-names="option.fieldNames"
-              v-model:expandedKeys="expandedKeys"
-              v-model:checkedKeys="formState[option.name]"
-              :check-strictly="checkStrictly"
-              :height="200"
-              block-node
-              checkable
+              :placeholder="`请选择${option.label}`"
+              :disabled="option.disabled ?? false"
+              tree-default-expand-all
+              style="width: 100%"
+              allow-clear
             />
-          </template>
 
-          <a-textarea
-            v-else-if="option.inputType === 'textarea'"
-            v-model:value="formState[option.name]"
-            :placeholder="`请输入${option.label}`"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-          />
+            <a-select
+              v-else-if="option.inputType === 'select'"
+              :mode="option.selectMode"
+              :options="option.treeOptions ?? dictObjs[option.selectType]"
+              :field-names="option.fieldNames"
+              v-model:value="formState[option.name]"
+              :placeholder="`请选择${option.label}`"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              show-arrow
+              :show-search="false"
+              allow-clear
+            />
 
-          <a-input-password
-            v-else-if="option.inputType === 'inputPassword'"
-            v-model:value="formState[option.name]"
-            :placeholder="`请输入${option.label}`"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-            autocomplete
-          />
+            <a-radio-group
+              v-else-if="option.inputType === 'radio'"
+              v-model:value="formState[option.name]"
+              :options="option.treeOptions ?? dictObjs[option.selectType]"
+              :disabled="option.disabled ?? false"
+            />
 
-          <a-input-number
-            v-else-if="option.inputType === 'inputNumber'"
-            v-model:value="formState[option.name]"
-            :placeholder="`请输入${option.label}`"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-          />
+            <template v-else-if="option.inputType === 'treeCheck'">
+              <a-checkbox-group
+                class="checkbox-margin"
+                v-model:value="checkboxVal"
+                :options="treeCheckOptions"
+                @change="handleCheckboxChange"
+              />
+              <a-tree
+                class="tree-wrap"
+                :tree-data="option.treeOptions ?? dictObjs[option.selectType]"
+                :field-names="option.fieldNames"
+                v-model:expandedKeys="expandedKeys"
+                v-model:checkedKeys="formState[option.name]"
+                :check-strictly="checkStrictly"
+                :height="200"
+                block-node
+                checkable
+              />
+            </template>
 
-          <a-input
-            v-else
-            v-model:value="formState[option.name]"
-            :placeholder="`请输入${option.label}`"
-            :disabled="disabled"
-            style="width: 100%"
-            allow-clear
-          />
-        </a-form-item>
-      </a-col>
+            <a-textarea
+              v-else-if="option.inputType === 'textarea'"
+              v-model:value="formState[option.name]"
+              :placeholder="`请输入${option.label}`"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
+            />
+
+            <a-input-password
+              v-else-if="option.inputType === 'inputPassword'"
+              v-model:value="formState[option.name]"
+              :placeholder="`请输入${option.label}`"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
+              autocomplete
+            />
+
+            <a-input-number
+              v-else-if="option.inputType === 'inputNumber'"
+              v-model:value="formState[option.name]"
+              :placeholder="`请输入${option.label}`"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
+            />
+
+            <a-input
+              v-else
+              v-model:value="formState[option.name]"
+              :placeholder="`请输入${option.label}`"
+              :disabled="option.disabled ?? false"
+              style="width: 100%"
+              allow-clear
+            />
+          </a-form-item>
+        </a-col>
+      </template>
     </a-row>
   </a-form>
 </template>

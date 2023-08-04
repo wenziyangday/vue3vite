@@ -101,4 +101,8 @@ export interface IFormItem {
   treeOptions?: unknown[];
   // 处理属性字段对应问题
   fieldNames?: IFieldNames;
+  // 允许操作与否
+  disabled?: boolean;
+  // 关联显示控制器（前面是字段，后面是值）[a, 2] vif=a===2
+  relationShow: string[];
 }
