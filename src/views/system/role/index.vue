@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal, type TableColumnsType } from 'ant-design-vue';
-import { computed, createVNode, h, inject, ref } from 'vue';
+import { computed, createVNode, h, inject, onMounted, ref } from 'vue';
 
-import { delRole, listRole } from '@/apis/system/role';
+import { treeSelect } from '@/apis/system/menu';
+import { addRole, delRole, listRole, updateRole } from '@/apis/system/role';
 import ActionTable from '@/components/action-table/ActionTable.vue';
 import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
+import VWForm from '@/components/table/form/VWForm.vue';
 import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
-import { type IOptSearch, type OptType } from '@/types/opts';
+import { type IFormItem, type IOptSearch, type OptType } from '@/types/opts';
 
 /**
  * 全局方法使用
@@ -103,10 +105,27 @@ const resetCb = (): void => {
 };
 
 // 表单事件操作
+const optType = ref<OptType>('add');
+const defaultValue = ref<unknown>({});
 const handleActionTables = (type: OptType, record?: unknown = {}): void => {
+  console.log(record, 'record');
+  optType.value = type;
+  if (type === 'add') {
+    defaultValue.value = {};
+    options.value = defaultOptions;
+    open.value = true;
+    void vwFormRef.value?.resetFields();
+  }
+
+  if (type === 'edit') {
+    defaultValue.value = record;
+    open.value = true;
+    void vwFormRef.value?.resetFields();
+  }
+
   if (type === 'delete') {
     let { roleId, index } = record;
-
+    defaultValue.value.roleId = roleId;
     if (!roleId) {
       if (rowKeys.value.length === 0) {
         void message.warning('请选中至少一条数据进行操作');
@@ -144,6 +163,86 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
     );
   }
 };
+
+// modal 数据
+const vwFormRef = ref();
+const open = ref<boolean>(false);
+const defaultOptions: IFormItem[] = [
+  {
+    label: '角色名称',
+    name: 'roleName'
+  },
+  {
+    label: '权限字符',
+    name: 'roleKey'
+  },
+  {
+    label: '角色顺序',
+    name: 'roleSort',
+    inputType: 'inputNumber'
+  },
+  {
+    label: '状态',
+    name: 'status',
+    inputType: 'radio',
+    selectType: 'sys_normal_disable'
+  },
+  {
+    label: '菜单权限',
+    name: 'menuIds',
+    inputType: 'treeCheck',
+    fieldNames: {
+      title: 'label',
+      key: 'id',
+      children: 'children'
+    },
+    treeOptions: [],
+    bisection: 1
+  },
+  {
+    label: '备注',
+    name: 'remark',
+    inputType: 'textarea',
+    bisection: 1
+  }
+];
+const options = ref<IFormItem[]>(defaultOptions);
+const rules = ref({
+  roleName: [{ required: true, message: '角色名称不能为空' }],
+  roleKey: [{ required: true, message: '权限字符不能为空' }],
+  roleSort: [{ required: true, message: '角色顺序不能为空' }]
+});
+
+const handleMenuTree = (): void => {
+  treeSelect().then((res) => {
+    const [gotIt] = options.value.filter(
+      (option) => option.inputType === 'treeCheck'
+    );
+    gotIt.treeOptions = res.data;
+  });
+};
+
+/**
+ * 新增/修改提交
+ * */
+const modalOk = (): void => {
+  void vwFormRef.value?.validate().then(() => {
+    let cb = addRole;
+    const params = vwFormRef.value.formState;
+    if (optType.value === 'edit') {
+      params.roleId = defaultValue.value.roleId;
+      cb = updateRole;
+    }
+    cb(params).then(() => {
+      open.value = false;
+      getList();
+    });
+  });
+};
+
+onMounted(() => {
+  handleMenuTree();
+});
 </script>
 
 <template>
@@ -191,6 +290,15 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
       </template>
     </template>
   </a-table>
+  <a-modal v-model:open="open" title="新增角色" :width="600" @ok="modalOk">
+    <v-w-form
+      ref="vwFormRef"
+      v-if="open"
+      :options="options"
+      :rules="rules"
+      :default-value="defaultValue"
+    />
+  </a-modal>
 </template>
 
 <style lang="less" scoped>

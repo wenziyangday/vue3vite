@@ -137,6 +137,43 @@ const handleBind = (option: IFormItem): unknown => {
   };
 };
 
+// 树形选择框
+// 全选，全不选
+const checkedKeys = ref([]);
+// 展开keys
+const expandedKeys = ref([]);
+const treeCheckOptions = [
+  {
+    label: '展开/折叠',
+    value: 'expandUnfold'
+  },
+  {
+    label: '全选/全不选',
+    value: 'checkAllUnCheck'
+  },
+  {
+    label: '父子联动',
+    value: 'linkage'
+  }
+];
+const checkboxVal = reactive(['linkage']);
+const checkStrictly = ref<boolean>(false);
+
+// 这个地方还是有点问题
+const handleCheckboxChange = (checkedValue): void => {
+  if (checkedValue.includes('expandUnfold')) {
+    expandedKeys.value = [1, 100];
+  } else {
+    expandedKeys.value = [];
+  }
+  if (checkedValue.includes('checkAllUnCheck')) {
+    checkedKeys.value = [1, 100];
+  } else {
+    checkedKeys.value = [];
+  }
+  checkStrictly.value = !checkedValue.includes('linkage');
+};
+
 // 抛出组件的属性和方法
 defineExpose({
   validate,
@@ -207,6 +244,26 @@ defineExpose({
             :disabled="disabled"
           />
 
+          <template v-else-if="option.inputType === 'treeCheck'">
+            <a-checkbox-group
+              class="checkbox-margin"
+              v-model:value="checkboxVal"
+              :options="treeCheckOptions"
+              @change="handleCheckboxChange"
+            />
+            <a-tree
+              class="tree-wrap"
+              :tree-data="option.treeOptions ?? dictObjs[option.selectType]"
+              :field-names="option.fieldNames"
+              v-model:expandedKeys="expandedKeys"
+              v-model:checkedKeys="formState[option.name]"
+              :check-strictly="checkStrictly"
+              :height="200"
+              block-node
+              checkable
+            />
+          </template>
+
           <a-textarea
             v-else-if="option.inputType === 'textarea'"
             v-model:value="formState[option.name]"
@@ -226,6 +283,15 @@ defineExpose({
             autocomplete
           />
 
+          <a-input-number
+            v-else-if="option.inputType === 'inputNumber'"
+            v-model:value="formState[option.name]"
+            :placeholder="`请输入${option.label}`"
+            :disabled="disabled"
+            style="width: 100%"
+            allow-clear
+          />
+
           <a-input
             v-else
             v-model:value="formState[option.name]"
@@ -242,5 +308,14 @@ defineExpose({
 <style lang="less" scoped>
 .form-item {
   margin-bottom: 0;
+}
+
+.checkbox-margin {
+  margin: 6px 0;
+}
+
+:deep(.tree-wrap) {
+  padding: 4px 0;
+  border: 1px solid #ccc;
 }
 </style>

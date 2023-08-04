@@ -57,12 +57,14 @@ export type OptTypeCN =
 type InputType =
   | 'input'
   | 'inputPassword'
+  | 'inputNumber'
   | 'textarea'
   | 'radio'
   | 'select'
   | 'dateRangePicker'
   | 'datePicker'
-  | 'treeSelect';
+  | 'treeSelect'
+  | 'treeCheck';
 
 /**
  * @param {
