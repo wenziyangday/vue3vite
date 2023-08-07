@@ -195,23 +195,26 @@ const handelRelationShow = (option: IFormItem): boolean => {
   return false;
 };
 
-// 处理切换重置数据
-watch(
-  formState,
-  () => {
-    // @wenTODO 之后需要判断变化的是那个字段，然后重置多个字段
-    relationShow.value.forEach((option) => {
-      if (option?.treeOptions?.length > 0 && option?.relationShow?.length > 0) {
-        formState.value[option.name] = [];
-      } else {
-        formState.value[option.name] = '';
-      }
-    });
-  },
-  {
-    deep: true
-  }
+// 重置关联字段的数据
+const relationShowItems = computed(() =>
+  props.options
+    .filter((option) => option?.relationShow?.length === 2)
+    .map((option) => ({
+      key: option.relationShow[0],
+      type: Array.isArray(option.treeOptions) ? [] : '',
+      name: option.name
+    }))
 );
+
+relationShowItems.value.forEach((item) => {
+  watch(
+    () => formState.value[item.key],
+    () => {
+      // @wenTODO 之后需要判断变化的是那个字段，然后重置多个字段
+      formState.value[item.name] = item.type;
+    }
+  );
+});
 
 // 抛出组件的属性和方法
 defineExpose({
