@@ -68,10 +68,8 @@ const selectTypes = computed(() =>
 /**
  * 全局获取字典值
  * */
-const dictInject = inject(keyProvide.$getDict);
 let dictObjs = reactive({});
 if (selectTypes.value.length > 0) {
-  dictInject(selectTypes.value);
   dictObjs = inject(keyProvide.dictObjs);
 }
 
