@@ -68,7 +68,7 @@ const selectTypes = computed(() =>
 /**
  * 全局获取字典值
  * */
-let dictObjs = reactive({});
+let dictObjs = reactive<Record<string, unknown>>({});
 if (selectTypes.value.length > 0) {
   dictObjs = inject(keyProvide.dictObjs);
 }
