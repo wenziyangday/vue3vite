@@ -2,11 +2,25 @@ import { onMounted, ref } from 'vue';
 
 const useTableRequest = function (
   requestCb?: Promise,
-  listKey?: string
+  listKey?: string,
+  defaultParams?: unknown,
+  isUnMounted?: boolean
 ): unknown {
   if (!listKey) {
     listKey = 'rows';
   }
+
+  if (!defaultParams) {
+    defaultParams = {};
+  }
+
+  // 是否初始化 mounted
+  if (!isUnMounted) {
+    isUnMounted = true;
+  } else {
+    isUnMounted = false;
+  }
+
   // 网络请求响应数据
   const dataSource: [] = ref([]);
   // 表格多选勾选项
@@ -35,7 +49,8 @@ const useTableRequest = function (
     requestCb({
       pageNum,
       pageSize,
-      ...formStatus.value
+      ...formStatus.value,
+      ...defaultParams
     }).then((res) => {
       dataSource.value = res[listKey];
       paginationIndicator.value.total = res.total;
@@ -55,7 +70,7 @@ const useTableRequest = function (
   };
 
   onMounted(() => {
-    requestCb && getList();
+    isUnMounted && requestCb && getList();
   });
 
   return {
