@@ -93,7 +93,7 @@ const handleEmit = (type: string): void => {
         <span style="margin-left: 4px">{{ opt.label }}</span>
       </a-button>
     </a-col>
-    <slot name="opt"></slot>
+    <slot name="opt" :size="props.btnSize" :type="props.btnType" />
     <a-col :span="1.5" v-if="foldOpts.length > 0">
       <a-dropdown arrow>
         <a-button :size="props.btnSize" :type="props.btnType">
