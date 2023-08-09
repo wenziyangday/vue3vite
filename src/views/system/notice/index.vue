@@ -185,7 +185,7 @@ const handleActionsTable = (type: string, record?: unknown): void => {
       ]),
       okText: '确认',
       onOk: () => {
-        delNotice(noticeId).then(() => {
+        return delNotice(noticeId).then(() => {
           void message.success('删除成功');
           getList();
         });

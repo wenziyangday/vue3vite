@@ -111,6 +111,20 @@ export const constantRoutes = [
         meta: { title: '分配角色', activeMenu: '/system/user' }
       }
     ]
+  },
+  {
+    path: '/system/role-auth',
+    component: () => import('@/views/layout/layout'),
+    hidden: true,
+    permissions: ['system:role:edit'],
+    children: [
+      {
+        path: 'user/:roleId(\\d+)',
+        component: () => import('@/views/system/role/authUser'),
+        name: 'AuthUser',
+        meta: { title: '分配用户', activeMenu: '/system/role' }
+      }
+    ]
   }
 ];
 

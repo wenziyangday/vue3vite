@@ -21,3 +21,9 @@ const data = reactive({
     </a-watermark>
   </a-config-provider>
 </template>
+
+<style lang="less">
+.form-item-margin {
+  margin: 16px 0;
+}
+</style>

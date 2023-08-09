@@ -2,6 +2,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal, type TableColumnsType } from 'ant-design-vue';
 import { computed, createVNode, h, inject, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { roleMenuTreeselect, treeSelect } from '@/apis/system/menu';
 import {
@@ -29,6 +30,8 @@ const dictInject = inject(keyProvide.$getDict);
 dictInject(['sys_normal_disable']);
 const dictObjs = inject(keyProvide.dictObjs);
 const download = inject(keyProvide.$download);
+
+const router = useRouter();
 
 // 搜索表单项
 const searchOptions = ref<IOptSearch[]>([
@@ -168,7 +171,7 @@ const handleActionTables = async (
       ]),
       okText: '确认',
       onOk: () => {
-        delRole(roleId).then(() => {
+        return delRole(roleId).then(() => {
           getList();
         });
       }
@@ -193,6 +196,11 @@ const handleActionTables = async (
     const { roleId } = record;
     defaultValue.value.roleId = roleId;
     open.value = true;
+  }
+
+  if (type === 'assignUsers') {
+    const { roleId } = record;
+    void router.push(`/system/role-auth/user/${roleId}`);
   }
 };
 
@@ -383,7 +391,6 @@ onMounted(() => {
       </template>
     </template>
   </a-table>
-  {{ formStatus }}
   <a-modal v-model:open="open" :title="titleRef" :width="600" @ok="modalOk">
     <v-w-form
       ref="vwFormRef"
@@ -400,9 +407,3 @@ onMounted(() => {
     />
   </a-modal>
 </template>
-
-<style lang="less" scoped>
-.form-item-margin {
-  margin: 16px 0;
-}
-</style>

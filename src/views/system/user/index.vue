@@ -315,9 +315,9 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
 
   if (type === 'edit') {
     title.value = '修改用户';
-    // 隐藏值
-    options.value = options.value.filter(
-      (option) => option.name !== 'password'
+    // 隐藏值 密码、角色
+    options.value = defaultOptions.filter(
+      (option) => option.name !== 'password' && option.name !== 'roleIds'
     );
     const { userId } = record;
     getUser(userId).then((res) => {
@@ -352,7 +352,7 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
       ]),
       okText: '确认',
       onOk: () => {
-        delUser(userId).then(() => {
+        return delUser(userId).then(() => {
           getList();
         });
       }
