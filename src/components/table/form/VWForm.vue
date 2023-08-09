@@ -195,6 +195,18 @@ const handelRelationShow = (option: IFormItem): boolean => {
   return false;
 };
 
+const handleDisable = (disable?: boolean): boolean => {
+  if (String(props.disabled)) {
+    return { disabled: props.disabled };
+  }
+
+  if (String(disable)) {
+    return { disabled: disable };
+  }
+
+  return { disabled: false };
+};
+
 // 重置关联字段的数据
 const relationShowItems = computed(() =>
   props.options
@@ -225,7 +237,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-form :model="formState" :disabled="disabled">
+  <a-form :model="formState">
     <a-row :gutter="[16, 16]">
       <template v-for="option in options">
         <a-col
@@ -241,7 +253,7 @@ defineExpose({
             <a-range-picker
               v-if="option.inputType === 'dateRangePicker'"
               v-model:value="formState[option.name]"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
             />
@@ -249,7 +261,7 @@ defineExpose({
             <a-date-picker
               v-else-if="option.inputType === 'datePicker'"
               v-model:value="formState[option.name]"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
             />
@@ -260,7 +272,7 @@ defineExpose({
               :tree-data="option.treeOptions"
               :field-names="option.fieldNames"
               :placeholder="`请选择${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               tree-default-expand-all
               style="width: 100%"
               allow-clear
@@ -273,7 +285,7 @@ defineExpose({
               :field-names="option.fieldNames"
               v-model:value="formState[option.name]"
               :placeholder="`请选择${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               show-arrow
               :show-search="false"
@@ -284,7 +296,7 @@ defineExpose({
               v-else-if="option.inputType === 'radio'"
               v-model:value="formState[option.name]"
               :options="option.treeOptions ?? dictObjs[option.selectType]"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
             />
 
             <template v-else-if="option.inputType === 'treeCheck'">
@@ -311,7 +323,7 @@ defineExpose({
               v-else-if="option.inputType === 'textarea'"
               v-model:value="formState[option.name]"
               :placeholder="`请输入${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
             />
@@ -320,7 +332,7 @@ defineExpose({
               v-else-if="option.inputType === 'inputPassword'"
               v-model:value="formState[option.name]"
               :placeholder="`请输入${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
               autocomplete
@@ -330,7 +342,7 @@ defineExpose({
               v-else-if="option.inputType === 'inputNumber'"
               v-model:value="formState[option.name]"
               :placeholder="`请输入${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
             />
@@ -339,7 +351,7 @@ defineExpose({
               v-else
               v-model:value="formState[option.name]"
               :placeholder="`请输入${option.label}`"
-              :disabled="option.disabled ?? false"
+              v-bind="handleDisable(option.disabled)"
               style="width: 100%"
               allow-clear
             />
