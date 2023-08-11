@@ -196,11 +196,11 @@ const handelRelationShow = (option: IFormItem): boolean => {
 };
 
 const handleDisable = (disable?: boolean): boolean => {
-  if (String(props.disabled)) {
+  if (props.disabled) {
     return { disabled: props.disabled };
   }
 
-  if (String(disable)) {
+  if (disable) {
     return { disabled: disable };
   }
 
@@ -222,7 +222,6 @@ relationShowItems.value.forEach((item) => {
   watch(
     () => formState.value[item.key],
     () => {
-      // @wenTODO 之后需要判断变化的是那个字段，然后重置多个字段
       formState.value[item.name] = item.type;
     }
   );
