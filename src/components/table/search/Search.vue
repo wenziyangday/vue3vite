@@ -15,6 +15,8 @@ const props = withDefaults(
     options?: IOptSearch[];
     // 折叠
     dropdownLength?: number;
+    // 默认值
+    defaultValue?: unknown;
   }>(),
   {
     labelSpan: 6,
@@ -85,7 +87,7 @@ const handleControlShowExpandFold = (): void => {
 /**
  * 搜索表单值, 不进行结构初始化，重置会失败
  * */
-const defaultFormState = {};
+const defaultFormState = props.defaultValue ?? {};
 props.options.forEach((option) => {
   defaultFormState[option.name] = null;
 });

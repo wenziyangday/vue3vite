@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal, type TableColumnsType } from 'ant-design-vue';
-import { computed, createVNode, h, inject, ref } from 'vue';
+import { computed, createVNode, h, inject, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import {
-  addPost,
-  delPost,
-  getPost,
-  listPost,
-  updatePost
-} from '@/apis/system/post';
+  addData,
+  delData,
+  getData,
+  listData,
+  updateData
+} from '@/apis/system/dict/data';
+import { getType, optionSelect } from '@/apis/system/dict/type';
 import ActionTable from '@/components/action-table/ActionTable.vue';
 import ConfirmContent from '@/components/confirm-content/ConfirmContent.vue';
 import DictTag from '@/components/dict-tag/DictTag.vue';
@@ -26,11 +28,46 @@ const dictInject = inject(keyProvide.$getDict);
 dictInject(['sys_normal_disable']);
 const dictObjs = inject(keyProvide.dictObjs);
 const download = inject(keyProvide.$download);
+const router = useRouter();
+
+dictObjs.list_class_options = [
+  {
+    value: 'default',
+    label: '默认'
+  },
+  {
+    value: 'primary',
+    label: '主要'
+  },
+  {
+    value: 'success',
+    label: '成功'
+  },
+  {
+    value: 'info',
+    label: '信息'
+  },
+  {
+    value: 'warning',
+    label: '警告'
+  },
+  {
+    value: 'danger',
+    label: '危险'
+  }
+];
+
+const { dictId } = router.currentRoute.value.params;
 
 // 搜索表单项
 const searchOptions = ref<IOptSearch[]>([
-  { label: '岗位编码', name: 'postCode' },
-  { label: '岗位名称', name: 'postName' },
+  {
+    label: '字典名称',
+    name: 'dictType',
+    inputType: 'select',
+    selectType: 'dict_values'
+  },
+  { label: '字典标签', name: 'dictLabel' },
   {
     label: '状态',
     name: 'status',
@@ -38,6 +75,7 @@ const searchOptions = ref<IOptSearch[]>([
     selectType: 'sys_normal_disable'
   }
 ]);
+const searchDefaultValues = ref<unknown>({});
 
 /**
  * th 表头
@@ -49,24 +87,29 @@ const columns = ref<TableColumnsType[]>([
     key: 'index'
   },
   {
-    title: '岗位编码',
-    dataIndex: 'postCode',
-    key: 'postCode'
+    title: '字典标签',
+    dataIndex: 'dictLabel',
+    key: 'dictLabel'
   },
   {
-    title: '岗位名称',
-    dataIndex: 'postName',
-    key: 'postName'
+    title: '字典键值',
+    dataIndex: 'dictValue',
+    key: 'dictValue'
   },
   {
-    title: '显示顺序',
-    dataIndex: 'postSort',
-    key: 'postSort'
+    title: '字典排序',
+    dataIndex: 'dictSort',
+    key: 'dictSort'
   },
   {
     title: '状态',
     dataIndex: 'status',
     key: 'status'
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark'
   },
   {
     title: '创建时间',
@@ -86,6 +129,7 @@ const columnsGetters = computed(() =>
   }))
 );
 
+// 搜索结合表格
 const {
   dataSource,
   formStatus,
@@ -95,7 +139,7 @@ const {
   handleChange,
   getList,
   searchCb
-} = useTableRequest(listPost);
+} = useTableRequest(listData, 'rows', searchDefaultValues.value, true);
 
 // 重置检索表单
 const resetCb = (): void => {
@@ -107,23 +151,38 @@ const optType = ref<OptType>('add');
 const defaultValue = ref<unknown>({});
 // modal 数据
 const vwFormRef = ref();
-const titleRef = ref('新增岗位');
+const titleRef = ref('新增字典值');
 const open = ref<boolean>(false);
 
-// 新增角色数据结构
+// 新增数据结构
 const defaultOptions: IFormItem[] = [
   {
-    label: '岗位名称',
-    name: 'postName'
+    label: '字典类型',
+    name: 'dictType',
+    disabled: true
   },
   {
-    label: '岗位编码',
-    name: 'postCode'
+    label: '数据标签',
+    name: 'dictLabel'
   },
   {
-    label: '岗位顺序',
-    name: 'postSort',
+    label: '数据键值',
+    name: 'dictValue'
+  },
+  {
+    label: '样式属性',
+    name: 'cssClass'
+  },
+  {
+    label: '显示排序',
+    name: 'dictSort',
     inputType: 'inputNumber'
+  },
+  {
+    label: '回显样式',
+    name: 'listClass',
+    inputType: 'select',
+    selectType: 'list_class_options'
   },
   {
     label: '状态',
@@ -140,9 +199,9 @@ const defaultOptions: IFormItem[] = [
 ];
 const options = ref<IFormItem[]>(defaultOptions);
 const rules = ref({
-  postName: [{ required: true, message: '岗位名称不能为空' }],
-  postCode: [{ required: true, message: '岗位编码不能为空' }],
-  postSort: [{ required: true, message: '岗位顺序不能为空' }]
+  dictLabel: [{ required: true, message: '数据标签不能为空' }],
+  dictValue: [{ required: true, message: '数据键值不能为空' }],
+  dictSort: [{ required: true, message: '显示排序不能为空' }]
 });
 const handleActionTables = async (
   type: OptType,
@@ -150,14 +209,17 @@ const handleActionTables = async (
 ): void => {
   optType.value = type;
   if (type === 'add') {
+    const params = searchDefaultValues.value;
+    defaultValue.value = {
+      dictType: params.dictType
+    };
     open.value = true;
-    defaultValue.value = {};
     void vwFormRef.value?.resetFields();
   }
 
   if (type === 'edit') {
-    titleRef.value = '修改岗位';
-    getPost(record.postId).then((res) => {
+    titleRef.value = '修改字典值';
+    getData(record.dictCode).then((res) => {
       defaultValue.value = { ...res.data, ...defaultValue.value };
       open.value = true;
       void vwFormRef.value?.resetFields();
@@ -165,13 +227,13 @@ const handleActionTables = async (
   }
 
   if (type === 'delete') {
-    let { postId, index } = record;
-    if (!postId) {
+    let { dictCode, index } = record;
+    if (!dictCode) {
       if (rowKeys.value.length === 0) {
         void message.warning('请选中至少一条数据进行操作');
         return;
       }
-      postId = rowKeys.value.join(',');
+      dictCode = rowKeys.value.join(',');
     }
     Modal.confirm({
       title: '系统提示',
@@ -186,7 +248,7 @@ const handleActionTables = async (
       ]),
       okText: '确认',
       onOk: () => {
-        return delPost(postId).then(() => {
+        return delData(dictCode).then(() => {
           getList();
         });
       }
@@ -194,7 +256,11 @@ const handleActionTables = async (
   }
 
   if (type === 'export') {
-    download('system/post/export', formStatus, `post_${+new Date()}.xlsx`);
+    download(
+      'system/dict/data/export',
+      formStatus,
+      `dictData_${+new Date()}.xlsx`
+    );
   }
 };
 
@@ -203,11 +269,11 @@ const handleActionTables = async (
  * */
 const modalOk = (): void => {
   void vwFormRef.value?.validate().then(() => {
-    let cb = addPost;
+    let cb = addData;
     const params = vwFormRef.value.formState;
     if (optType.value === 'edit') {
-      params.postId = defaultValue.value.postId;
-      cb = updatePost;
+      params.dictCode = defaultValue.value.dictCode;
+      cb = updateData;
     }
 
     cb(params).then(() => {
@@ -216,10 +282,34 @@ const modalOk = (): void => {
     });
   });
 };
+
+const close = (): void => {
+  router.back();
+};
+
+onMounted(async () => {
+  await getType(dictId).then((res) => {
+    searchDefaultValues.value.dictType = res.data.dictType;
+  });
+  await optionSelect().then((res) => {
+    dictObjs.dict_values = res.data.map((item) => ({
+      label: item.dictName,
+      value: item.dictType,
+      raw: item
+    }));
+  });
+
+  getList();
+});
 </script>
 
 <template>
-  <search :options="searchOptions" @search-cb="searchCb" @reset-cb="resetCb" />
+  <search
+    :default-value="searchDefaultValues"
+    :options="searchOptions"
+    @search-cb="searchCb"
+    @reset-cb="resetCb"
+  />
   <a-row class="form-item-margin">
     <a-col>
       <action-table
@@ -227,14 +317,25 @@ const modalOk = (): void => {
         :row-gutter="16"
         :dropdown-length="4"
         @click-cb="handleActionTables"
-      />
+      >
+        <template #opt="opt">
+          <a-col :span="1.5">
+            <a-button :size="opt.btnSize" :type="opt.btnType" @click="close">
+              <template #icon>
+                <close-outlined />
+              </template>
+              <span style="margin-left: 4px">关闭</span>
+            </a-button>
+          </a-col>
+        </template>
+      </action-table>
     </a-col>
   </a-row>
   <a-table
     :columns="columnsGetters"
     :data-source="dataSource"
     :pagination="paginationIndicator"
-    row-key="postId"
+    row-key="dictCode"
     :row-selection="{
       onChange: handleChangeSelection
     }"

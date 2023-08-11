@@ -79,6 +79,7 @@ export interface IOptSearch {
   name?: string;
   inputType?: InputType;
   selectType?: string;
+  treeOptions?: Array<Record<string, unknown>>;
 }
 
 interface IFieldNames {

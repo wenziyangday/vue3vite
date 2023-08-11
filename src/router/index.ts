@@ -125,6 +125,20 @@ export const constantRoutes = [
         meta: { title: '分配用户', activeMenu: '/system/role' }
       }
     ]
+  },
+  {
+    path: '/system/dict-data',
+    component: () => import('@/views/layout/layout'),
+    hidden: true,
+    permissions: ['system:dict:list'],
+    children: [
+      {
+        path: 'index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data'),
+        name: 'Data',
+        meta: { title: '字典数据', activeMenu: '/system/dict' }
+      }
+    ]
   }
 ];
 

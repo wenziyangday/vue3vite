@@ -332,7 +332,7 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   if (type === 'delete') {
     let { userId, index } = record;
 
-    if (!userId) {
+    if (userId) {
       if (rowKeys.value.length === 0) {
         void message.warning('请选中至少一条数据进行操作');
         return;
@@ -360,13 +360,7 @@ const handleActionTables = (type: OptType, record?: unknown = {}): void => {
   }
 
   if (type === 'export') {
-    download(
-      'system/user/export',
-      {
-        ...formStatus
-      },
-      `user_${+new Date()}.xlsx`
-    );
+    download('system/user/export', formStatus, `user_${+new Date()}.xlsx`);
   }
 
   if (type === 'import') {
