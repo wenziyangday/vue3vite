@@ -46,7 +46,11 @@ if (keys.length === 0) {
     defaultState[key] = null;
 
     if (option.inputType === 'radio') {
-      defaultState[key] = '0';
+      if (option.defaultValue) {
+        defaultState[key] = option.defaultValue;
+      } else {
+        defaultState[key] = '0';
+      }
     }
 
     // 多选模式下 需要初始化为数组

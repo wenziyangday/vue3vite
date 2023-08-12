@@ -106,4 +106,6 @@ export interface IFormItem {
   disabled?: boolean;
   // 关联显示控制器（前面是字段，后面是值）[a, 2] vif=a===2
   relationShow: string[];
+  // 默认值
+  defaultValue?: unknown;
 }
