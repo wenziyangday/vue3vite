@@ -15,11 +15,7 @@ const useTableRequest = function (
   }
 
   // 是否初始化 mounted
-  if (!isUnMounted) {
-    isUnMounted = true;
-  } else {
-    isUnMounted = false;
-  }
+  isUnMounted = !isUnMounted;
 
   // 网络请求响应数据
   const dataSource: [] = ref([]);
@@ -37,7 +33,7 @@ const useTableRequest = function (
     rowKeys.value = selectedRowKeys;
   };
 
-  // 检索条件
+  // 检索条件 接收响应式的form 表单
   const formStatus = ref<unknown>({});
   /**
    * 获取列表

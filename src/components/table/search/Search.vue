@@ -94,7 +94,7 @@ props.options.forEach((option) => {
 const formState = reactive(defaultFormState);
 
 /**
- * 搜索点击事件
+ * 搜索点击事件, 同时抛出响应式的formState
  * */
 const handleSearch = (): void => {
   emit('searchCb', formState);
