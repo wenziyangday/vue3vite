@@ -1,10 +1,14 @@
 import { onMounted, ref } from 'vue';
 
+import { handleTree } from '@/utils/tools';
+
 const useTableRequest = function (
   requestCb?: Promise,
   listKey?: string,
   defaultParams?: unknown,
-  isUnMounted?: boolean
+  isUnMounted?: boolean,
+  isNotUsePagination?: boolean,
+  needTree?: Record<string, unknown>
 ): unknown {
   if (!listKey) {
     listKey = 'rows';
@@ -22,11 +26,15 @@ const useTableRequest = function (
   // 表格多选勾选项
   const rowKeys = ref<string | number[]>([]);
   // 分页控制器数据项
-  const paginationIndicator = ref({
-    current: 1,
-    defaultPageSize: 10,
-    total: 0
-  });
+  let defaultPaginationIndicator = {};
+  if (!isNotUsePagination) {
+    defaultPaginationIndicator = {
+      current: 1,
+      defaultPageSize: 10,
+      total: 0
+    };
+  }
+  const paginationIndicator = ref(defaultPaginationIndicator);
 
   // 多选处理方法
   const handleChangeSelection = (selectedRowKeys: string | number[]): void => {
@@ -48,7 +56,11 @@ const useTableRequest = function (
       ...formStatus.value,
       ...defaultParams
     }).then((res) => {
-      dataSource.value = res[listKey];
+      if (needTree) {
+        dataSource.value = handleTree(res[listKey], needTree.value);
+      } else {
+        dataSource.value = res[listKey];
+      }
       paginationIndicator.value.total = res.total;
     });
   };
