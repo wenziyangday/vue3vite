@@ -15,3 +15,46 @@ export function roleMenuTreeselect(roleId: string | number): Promise {
     method: 'get'
   });
 }
+
+// 查询菜单列表
+export function listMenu(query): Promise {
+  return request({
+    url: '/system/menu/list',
+    method: 'get',
+    params: query
+  });
+}
+
+// 查询菜单详细
+export function getMenu(menuId: string | number): Promise {
+  return request({
+    url: `/system/menu/${menuId}`,
+    method: 'get'
+  });
+}
+
+// 新增菜单
+export function addMenu(data): Promise {
+  return request({
+    url: '/system/menu',
+    method: 'post',
+    data
+  });
+}
+
+// 修改菜单
+export function updateMenu(data): Promise {
+  return request({
+    url: '/system/menu',
+    method: 'put',
+    data
+  });
+}
+
+// 删除菜单
+export function delMenu(menuId: string | number): Promise {
+  return request({
+    url: `/system/menu/${menuId}`,
+    method: 'delete'
+  });
+}
