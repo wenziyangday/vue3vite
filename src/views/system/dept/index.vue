@@ -98,26 +98,41 @@ const optType = ref<OptType>('add');
 const defaultValue = ref<unknown>({});
 // modal 数据
 const vwFormRef = ref();
-const titleRef = ref('新增岗位');
+const titleRef = ref('新增部门');
 const open = ref<boolean>(false);
 
 // 新增角色数据结构
 const defaultOptions: IFormItem[] = [
   {
-    label: '岗位名称',
-    name: 'postName'
+    label: '上级部门',
+    name: 'parentId',
+    inputType: 'treeSelect',
+    bisection: 1,
+    fieldNames: { children: 'children', label: 'deptName', value: 'deptId' }
   },
   {
-    label: '岗位编码',
-    name: 'postCode'
+    label: '部门名称',
+    name: 'deptName'
   },
   {
-    label: '岗位顺序',
-    name: 'postSort',
+    label: '显示排序',
+    name: 'orderNum',
     inputType: 'inputNumber'
   },
   {
-    label: '状态',
+    label: '负责人',
+    name: 'leader'
+  },
+  {
+    label: '联系电话',
+    name: 'phone'
+  },
+  {
+    label: '邮箱',
+    name: 'email'
+  },
+  {
+    label: '部门状态',
     name: 'status',
     inputType: 'radio',
     selectType: 'sys_normal_disable'
@@ -131,9 +146,13 @@ const defaultOptions: IFormItem[] = [
 ];
 const options = ref<IFormItem[]>(defaultOptions);
 const rules = ref({
-  postName: [{ required: true, message: '岗位名称不能为空' }],
-  postCode: [{ required: true, message: '岗位编码不能为空' }],
-  postSort: [{ required: true, message: '岗位顺序不能为空' }]
+  parentId: [{ required: true, message: '上级部门不能为空' }],
+  deptName: [{ required: true, message: '部门名称不能为空' }],
+  orderNum: [{ required: true, message: '显示排序不能为空' }],
+  email: [{ type: 'email', message: '请输入正确的邮箱地址' }],
+  phone: [
+    { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }
+  ]
 });
 const handleActionTables = async (
   type: OptType,
@@ -143,6 +162,11 @@ const handleActionTables = async (
   if (type === 'add') {
     open.value = true;
     defaultValue.value = {};
+    options.value.forEach((option) => {
+      if (option.name === 'parentId') {
+        option.treeOptions = dataSource.value;
+      }
+    });
     void vwFormRef.value?.resetFields();
   }
 
