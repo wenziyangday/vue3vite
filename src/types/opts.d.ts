@@ -108,4 +108,6 @@ export interface IFormItem {
   relationShow: string[];
   // 默认值
   defaultValue?: unknown;
+  // 提示说明
+  tooltipDesc?: string;
 }

@@ -257,11 +257,16 @@ defineExpose({
           :span="handleBisection(option.bisection)"
           v-if="handelRelationShow(option)"
         >
-          <a-form-item
-            :label="option.label"
-            class="form-item"
-            v-bind="handleBind(option)"
-          >
+          <a-form-item class="form-item" v-bind="handleBind(option)">
+            <template #label>
+              <a-tooltip v-if="option?.tooltipDesc">
+                <template #title>
+                  {{ option?.tooltipDesc }}
+                </template>
+                <question-circle-outlined class="right-icon" />
+              </a-tooltip>
+              {{ option.label }}
+            </template>
             <a-range-picker
               v-if="option.inputType === 'dateRangePicker'"
               v-model:value="formState[option.name]"
@@ -385,5 +390,14 @@ defineExpose({
 :deep(.tree-wrap) {
   padding: 4px 0;
   border: 1px solid #ccc;
+}
+
+:deep(.right-icon) {
+  margin-right: 4px;
+  font-size: 8px;
+}
+
+:deep(.anticon) {
+  font-size: 8px !important;
 }
 </style>
