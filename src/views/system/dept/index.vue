@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { message, Modal, type TableColumnsType } from 'ant-design-vue';
+import { Modal, type TableColumnsType } from 'ant-design-vue';
 import { computed, createVNode, h, inject, ref } from 'vue';
 
 import {
@@ -99,7 +99,7 @@ const vwFormRef = ref();
 const titleRef = ref('新增部门');
 const open = ref<boolean>(false);
 
-// 新增角色数据结构
+// 新增数据结构
 const defaultOptions: IFormItem[] = [
   {
     label: '上级部门',
