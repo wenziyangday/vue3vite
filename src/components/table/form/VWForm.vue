@@ -191,15 +191,35 @@ const handelRelationShow = (option: IFormItem): boolean => {
   if (!option?.relationShow) {
     return true;
   }
+
+  // 是数组 && 长度为2 && 数组里面的元素不是数组
   if (
     Array.isArray(option?.relationShow) &&
-    option?.relationShow.length === 2
+    option?.relationShow.length === 2 &&
+    !Array.isArray(option?.relationShow[0])
   ) {
     if (!relationShow.value.some((rs) => rs.name === option.name)) {
       relationShow.value.push(option);
     }
     const [key, val] = option?.relationShow;
     return formState.value[key] === val;
+  }
+
+  // 是数组 && 数组中每一个元素都是数组
+  if (
+    Array.isArray(option?.relationShow) &&
+    option?.relationShow?.every((rs) => Array.isArray(rs))
+  ) {
+    if (!relationShow.value.some((rs) => rs.name === option.name)) {
+      relationShow.value.push(option);
+    }
+
+    const booleans = [];
+    option?.relationShow.forEach((rs) => {
+      const [key, val] = rs;
+      booleans.push(formState.value[key] === val);
+    });
+    return booleans.some((bool) => bool === true);
   }
 
   return false;
