@@ -62,27 +62,33 @@ if (keys.length === 0) {
   const defaultValueKeys = Object.keys(props.defaultValue);
 
   props.options.forEach((option) => {
-    const { name: key, inputType, selectMode } = option;
+    const { name: key, inputType, selectMode, defaultValue } = option;
     if (defaultValueKeys.includes(key)) {
       defaultState[key] = props.defaultValue[key];
     } else {
       if (props.defaultValue[key]) {
         defaultState[key] = props.defaultValue[key];
       } else {
-        defaultState[key] = null;
+        if (defaultValue) {
+          defaultState[key] = defaultValue;
+        } else {
+          defaultState[key] = null;
 
-        if (inputType === 'radio') {
-          defaultState[key] = '0';
-        }
+          if (inputType === 'radio') {
+            defaultState[key] = '0';
+          }
 
-        // 多选模式下 需要初始化为数组
-        if (selectMode) {
-          defaultState[key] = [];
+          // 多选模式下 需要初始化为数组
+          if (selectMode) {
+            defaultState[key] = [];
+          }
         }
       }
     }
   });
 }
+
+console.log(defaultState, 'defaultState');
 
 const formState = ref<Record<string, unknown>>(defaultState);
 /**
