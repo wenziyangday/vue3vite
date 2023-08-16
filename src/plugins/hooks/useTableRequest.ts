@@ -50,12 +50,17 @@ const useTableRequest = function (
     const {
       value: { current: pageNum, defaultPageSize: pageSize }
     } = paginationIndicator;
-    requestCb({
-      pageNum,
-      pageSize,
+    const params = {
       ...formStatus.value,
       ...defaultParams
-    }).then((res) => {
+    };
+
+    if (!isNotUsePagination) {
+      params.pageNum = pageNum;
+      params.pageSize = pageSize;
+    }
+
+    requestCb(params).then((res) => {
       if (needTree) {
         dataSource.value = handleTree(res[listKey], needTree.value);
       } else {
