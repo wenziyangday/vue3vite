@@ -40,6 +40,7 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
 
 const defaultState = {};
 const keys = Object.keys(props.defaultValue ?? {});
+// 新增
 if (keys.length === 0) {
   props.options.forEach((option) => {
     const key = option.name;
@@ -59,6 +60,7 @@ if (keys.length === 0) {
     }
   });
 } else {
+  // 编辑处理 或者 部分初始化处理
   const defaultValueKeys = Object.keys(props.defaultValue);
 
   props.options.forEach((option) => {
@@ -87,8 +89,6 @@ if (keys.length === 0) {
     }
   });
 }
-
-console.log(defaultState, 'defaultState');
 
 const formState = ref<Record<string, unknown>>(defaultState);
 /**
