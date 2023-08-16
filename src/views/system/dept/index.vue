@@ -79,13 +79,11 @@ const columnsGetters = computed(() =>
   }))
 );
 
-const { dataSource, formStatus, getList, searchCb } = useTableRequest(
-  listDept,
-  'data',
-  {},
-  false,
-  true,
-  { value: 'deptId' }
+const { dataSource, formStatus, getList, searchCb, originalData } =
+  useTableRequest(listDept, 'data', {}, false, true, { value: 'deptId' });
+
+const expandedRowKeys: string | number[] = computed(() =>
+  originalData.value.map((data) => data.deptId)
 );
 
 // 重置检索表单
@@ -160,8 +158,13 @@ const handleActionTables = async (
 ): void => {
   optType.value = type;
   if (type === 'add') {
+    const { deptId, deptName } = record;
     open.value = true;
-    defaultValue.value = {};
+    if (deptName) {
+      defaultValue.value.parentId = deptId;
+    } else {
+      defaultValue.value = {};
+    }
     options.value.forEach((option) => {
       if (option.name === 'parentId') {
         option.treeOptions = dataSource.value;
@@ -220,6 +223,16 @@ const modalOk = (): void => {
     });
   });
 };
+
+// 展开折叠
+const expendCollapseVal = ref<[]>([]);
+const expandCollapse = (): void => {
+  if (expendCollapseVal.value.length === 0) {
+    expendCollapseVal.value = expandedRowKeys.value;
+  } else {
+    expendCollapseVal.value = [];
+  }
+};
 </script>
 
 <template>
@@ -230,12 +243,29 @@ const modalOk = (): void => {
         :options="['add']"
         :row-gutter="16"
         @click-cb="handleActionTables"
-      />
+      >
+        <template #opt="slot">
+          <a-col :span="1.5">
+            <a-button
+              :size="slot.size"
+              :type="slot.type"
+              @click="expandCollapse"
+            >
+              <template #icon>
+                <node-collapse-outlined v-if="expendCollapseVal.length === 0" />
+                <node-expand-outlined v-else />
+              </template>
+              <span style="margin-left: 4px">展开/折叠</span>
+            </a-button>
+          </a-col>
+        </template>
+      </action-table>
     </a-col>
   </a-row>
   <a-table
     :columns="columnsGetters"
     :data-source="dataSource"
+    v-model:expanded-row-keys="expendCollapseVal"
     row-key="deptId"
     :pagination="false"
   >
@@ -248,7 +278,8 @@ const modalOk = (): void => {
         <action-table
           btn-size="small"
           btn-type="link"
-          :options="['edit', 'delete']"
+          :options="['edit', 'add', 'delete']"
+          :dropdown-length="3"
           @click-cb="
             (type) => {
               handleActionTables(type, { ...record, index: index + 1 });
