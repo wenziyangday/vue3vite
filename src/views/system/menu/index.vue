@@ -112,7 +112,7 @@ const optType = ref<OptType>('add');
 const defaultValue = ref<unknown>({});
 // modal 数据
 const vwFormRef = ref();
-const titleRef = ref('新增部门');
+const titleRef = ref('新增菜单');
 const open = ref<boolean>(false);
 // 新增数据结构
 const defaultOptions: IFormItem[] = [
@@ -146,7 +146,11 @@ const defaultOptions: IFormItem[] = [
   },
   {
     label: '菜单图标',
-    name: 'icon'
+    name: 'icon',
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ]
   },
   {
     label: '菜单名称',
@@ -171,29 +175,43 @@ const defaultOptions: IFormItem[] = [
         value: '1'
       }
     ],
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ],
     tooltipDesc: '选择是外链则路由地址需要以`http(s)://`开头'
   },
 
   {
     label: '路由地址',
     name: 'path',
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ],
     tooltipDesc:
       '访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头'
   },
   {
     label: '组件路径',
     name: 'component',
+    relationShow: ['menuType', 'C'],
     tooltipDesc: '访问的组件路径，如：`system/user/index`，默认在`views`目录下'
   },
   {
     label: '权限字符',
     name: 'perms',
+    relationShow: [
+      ['menuType', 'C'],
+      ['menuType', 'F']
+    ],
     tooltipDesc:
       "控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)"
   },
   {
     label: '路由参数',
     name: 'query',
+    relationShow: ['menuType', 'C'],
     tooltipDesc: '访问路由的默认传递参数，如：`{"id": 1, "name": "ry"}`'
   },
   {
@@ -210,6 +228,7 @@ const defaultOptions: IFormItem[] = [
         value: '1'
       }
     ],
+    relationShow: ['menuType', 'C'],
     tooltipDesc:
       '选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致'
   },
@@ -218,6 +237,10 @@ const defaultOptions: IFormItem[] = [
     name: 'visible',
     inputType: 'radio',
     selectType: 'sys_show_hide',
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ],
     tooltipDesc: '选择隐藏则路由将不会出现在侧边栏，但仍然可以访问'
   },
   {
@@ -225,6 +248,10 @@ const defaultOptions: IFormItem[] = [
     name: 'status',
     inputType: 'radio',
     selectType: 'sys_normal_disable',
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ],
     tooltipDesc: '选择停用则路由将不会出现在侧边栏，也不能被访问'
   }
 ];
@@ -266,7 +293,7 @@ const handleActionTables = async (
   }
 
   if (type === 'edit') {
-    titleRef.value = '修改岗位';
+    titleRef.value = '修改菜单';
     getMenu(record.menuId).then((res) => {
       defaultValue.value = { ...res.data, ...defaultValue.value };
       open.value = true;
