@@ -60,23 +60,23 @@ if (keys.length === 0) {
   });
 } else {
   const defaultValueKeys = Object.keys(props.defaultValue);
-  const optionsEntries = Object.fromEntries(
-    props.options.map((option) => [option.name, option])
-  );
 
-  defaultValueKeys.forEach((key) => {
-    if (optionsEntries[key]) {
+  props.options.forEach((option) => {
+    const { name: key, inputType, selectMode } = option;
+    if (defaultValueKeys.includes(key)) {
+      defaultState[key] = props.defaultValue[key];
+    } else {
       if (props.defaultValue[key]) {
         defaultState[key] = props.defaultValue[key];
       } else {
         defaultState[key] = null;
 
-        if (optionsEntries[key]?.inputType === 'radio') {
+        if (inputType === 'radio') {
           defaultState[key] = '0';
         }
 
         // 多选模式下 需要初始化为数组
-        if (optionsEntries[key]?.selectMode) {
+        if (selectMode) {
           defaultState[key] = [];
         }
       }
@@ -199,6 +199,9 @@ const handelRelationShow = (option: IFormItem): boolean => {
   return false;
 };
 
+/**
+ * 处理查看时，禁用表单
+ * */
 const handleDisable = (disable?: boolean): boolean => {
   if (props.disabled) {
     return { disabled: props.disabled };
