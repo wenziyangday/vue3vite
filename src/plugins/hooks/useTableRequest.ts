@@ -23,6 +23,8 @@ const useTableRequest = function (
 
   // 网络请求响应数据
   const dataSource: [] = ref([]);
+  // 原始数据  网络请求响应数据
+  const originalData: [] = ref([]);
   // 表格多选勾选项
   const rowKeys = ref<string | number[]>([]);
   // 分页控制器数据项
@@ -66,6 +68,7 @@ const useTableRequest = function (
       } else {
         dataSource.value = res[listKey];
       }
+      originalData.value = res[listKey];
       paginationIndicator.value.total = res.total;
     });
   };
@@ -91,6 +94,7 @@ const useTableRequest = function (
     rowKeys,
     formStatus,
     paginationIndicator,
+    originalData,
     searchCb,
     handleChangeSelection,
     handleChange,
