@@ -18,6 +18,7 @@ getIcons().then((res) => {
   dictObjs[keyProvide.icons] = res.data
     .match(reg)
     .map((item) => item.replace('id="', '').replace('"', ''))
+    .sort((a, b) => a.localeCompare(b))
     .map((icon) => ({
       label: icon,
       value: icon
