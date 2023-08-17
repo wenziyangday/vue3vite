@@ -145,14 +145,6 @@ const defaultOptions: IFormItem[] = [
     bisection: 1
   },
   {
-    label: '菜单图标',
-    name: 'icon',
-    relationShow: [
-      ['menuType', 'M'],
-      ['menuType', 'C']
-    ]
-  },
-  {
     label: '菜单名称',
     name: 'menuName'
   },
@@ -160,6 +152,14 @@ const defaultOptions: IFormItem[] = [
     label: '显示排序',
     name: 'orderNum',
     inputType: 'inputNumber'
+  },
+  {
+    label: '菜单图标',
+    name: 'icon',
+    relationShow: [
+      ['menuType', 'M'],
+      ['menuType', 'C']
+    ]
   },
   {
     label: '是否外链',
@@ -181,7 +181,6 @@ const defaultOptions: IFormItem[] = [
     ],
     tooltipDesc: '选择是外链则路由地址需要以`http(s)://`开头'
   },
-
   {
     label: '路由地址',
     name: 'path',
@@ -274,6 +273,7 @@ const handleActionTables = async (
     const { menuId, menuName } = record;
     open.value = true;
     if (menuName) {
+      defaultValue.value = {};
       defaultValue.value.parentId = menuId;
     } else {
       defaultValue.value = {};
@@ -294,8 +294,18 @@ const handleActionTables = async (
 
   if (type === 'edit') {
     titleRef.value = '修改菜单';
+    options.value.forEach((option) => {
+      if (option.name === 'parentId') {
+        const menu = {
+          menuId: 0,
+          menuName: '顶层类目',
+          children: dataSource.value
+        };
+        option.treeOptions = [menu];
+      }
+    });
     getMenu(record.menuId).then((res) => {
-      defaultValue.value = { ...res.data, ...defaultValue.value };
+      defaultValue.value = { ...res.data };
       open.value = true;
       void vwFormRef.value?.resetFields();
     });
@@ -400,7 +410,7 @@ const expandCollapse = (): void => {
         <action-table
           btn-size="small"
           btn-type="link"
-          :options="['edit', 'add', 'delete']"
+          :options="['add', 'edit', 'delete']"
           :dropdown-length="3"
           @click-cb="
             (type) => {
