@@ -40,7 +40,7 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
 
 const defaultState = {};
 const keys = Object.keys(props.defaultValue ?? {});
-const defaultValueKeys = Object.keys(props.defaultValue);
+const defaultValueKeys = Object.keys(props.defaultValue ?? {});
 // 新增
 if (keys.length === 0) {
   props.options.forEach((option) => {
@@ -348,7 +348,7 @@ defineExpose({
         <a-col
           :key="option.name"
           :span="handleBisection(option.bisection)"
-          v-if="handelRelationShow(option)"
+          v-if="handelRelationShow && handelRelationShow(option)"
         >
           <a-form-item class="form-item" v-bind="handleBind(option)">
             <template #label>
