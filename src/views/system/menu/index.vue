@@ -270,6 +270,7 @@ const handleActionTables = async (
 ): void => {
   optType.value = type;
   if (type === 'add') {
+    titleRef.value = '新增菜单';
     const { menuId, menuName } = record;
     open.value = true;
     if (menuName) {

@@ -158,9 +158,11 @@ const handleActionTables = async (
 ): void => {
   optType.value = type;
   if (type === 'add') {
+    titleRef.value = '新增部门';
     const { deptId, deptName } = record;
     open.value = true;
     if (deptName) {
+      defaultValue.value = {};
       defaultValue.value.parentId = deptId;
     } else {
       defaultValue.value = {};
@@ -174,14 +176,15 @@ const handleActionTables = async (
   }
 
   if (type === 'edit') {
-    titleRef.value = '修改岗位';
+    titleRef.value = '修改部门';
+    const { parentId } = record;
     options.value.forEach((option) => {
-      if (option.name === 'parentId') {
+      if (option.name === 'parentId' && parentId !== 0) {
         option.treeOptions = dataSource.value;
       }
     });
     getDept(record.deptId).then((res) => {
-      defaultValue.value = { ...res.data, ...defaultValue.value };
+      defaultValue.value = { ...res.data };
       open.value = true;
       void vwFormRef.value?.resetFields();
     });
