@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal, type TableColumnsType } from 'ant-design-vue';
-import { computed, createVNode, h, inject, ref } from 'vue';
+import { computed, createVNode, h, inject, nextTick, ref } from 'vue';
 
 import {
   addDept,
@@ -152,13 +152,16 @@ const rules = ref({
     { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }
   ]
 });
+
 const handleActionTables = async (
   type: OptType,
   record?: unknown = {}
 ): void => {
   optType.value = type;
+
   if (type === 'add') {
     titleRef.value = '新增部门';
+    options.value = defaultOptions;
     const { deptId, deptName } = record;
     open.value = true;
     if (deptName) {
@@ -167,26 +170,31 @@ const handleActionTables = async (
     } else {
       defaultValue.value = {};
     }
-    options.value.forEach((option) => {
-      if (option.name === 'parentId') {
-        option.treeOptions = dataSource.value;
-      }
-    });
     void vwFormRef.value?.resetFields();
   }
-
   if (type === 'edit') {
-    titleRef.value = '修改部门';
     const { parentId } = record;
-    options.value.forEach((option) => {
-      if (option.name === 'parentId' && parentId !== 0) {
-        option.treeOptions = dataSource.value;
-      }
-    });
+    if (parentId === 0) {
+      options.value = defaultOptions.filter(
+        (option) => option.name !== 'parentId'
+      );
+    } else {
+      options.value = defaultOptions;
+    }
+
+    titleRef.value = '修改部门';
     getDept(record.deptId).then((res) => {
       defaultValue.value = { ...res.data };
       open.value = true;
       void vwFormRef.value?.resetFields();
+    });
+  }
+
+  if (type === 'add' || type === 'edit') {
+    options.value.forEach((option) => {
+      if (option.name === 'parentId') {
+        option.treeOptions = dataSource.value;
+      }
     });
   }
 
@@ -222,6 +230,7 @@ const modalOk = (): void => {
     const params = vwFormRef.value.formState;
     if (optType.value === 'edit') {
       params.deptId = defaultValue.value.deptId;
+      params.parentId = defaultValue.value.parentId;
       cb = updateDept;
     }
 
@@ -240,6 +249,13 @@ const expandCollapse = (): void => {
   } else {
     expendCollapseVal.value = [];
   }
+};
+
+const handleActions = (record): string[] => {
+  if (record.parentId === 0) {
+    return ['edit', 'add'];
+  }
+  return ['edit', 'add', 'delete'];
 };
 </script>
 
@@ -286,7 +302,7 @@ const expandCollapse = (): void => {
         <action-table
           btn-size="small"
           btn-type="link"
-          :options="['edit', 'add', 'delete']"
+          :options="handleActions(record)"
           :dropdown-length="3"
           @click-cb="
             (type) => {
