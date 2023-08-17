@@ -40,6 +40,7 @@ const wrapSpan = computed(() => 24 - props.labelSpan);
 
 const defaultState = {};
 const keys = Object.keys(props.defaultValue ?? {});
+const defaultValueKeys = Object.keys(props.defaultValue);
 // 新增
 if (keys.length === 0) {
   props.options.forEach((option) => {
@@ -61,8 +62,6 @@ if (keys.length === 0) {
   });
 } else {
   // 编辑处理 或者 部分初始化处理
-  const defaultValueKeys = Object.keys(props.defaultValue);
-
   props.options.forEach((option) => {
     const { name: key, inputType, selectMode, defaultValue } = option;
     if (defaultValueKeys.includes(key)) {
@@ -219,6 +218,7 @@ const handelRelationShow = (option: IFormItem): boolean => {
       const [key, val] = rs;
       booleans.push(formState.value[key] === val);
     });
+
     return booleans.some((bool) => bool === true);
   }
 
@@ -241,21 +241,94 @@ const handleDisable = (disable?: boolean): boolean => {
 };
 
 // 重置关联字段的数据
-const relationShowItems = computed(() =>
+const relationShowItems = computed(() => {
+  const arr = [];
   props.options
-    .filter((option) => option?.relationShow?.length === 2)
-    .map((option) => ({
-      key: option.relationShow[0],
-      type: Array.isArray(option.treeOptions) ? [] : '',
-      name: option.name
-    }))
-);
+    .filter(
+      (option) =>
+        option?.relationShow?.length === 2 ||
+        (option?.relationShow?.length > 0 &&
+          option?.relationShow?.every((rs) => rs.length === 2))
+    )
+    .forEach((option) => {
+      if (Array.isArray(option.relationShow[0])) {
+        option.relationShow.forEach((rs) => {
+          if (
+            !arr.some((item) => item.name === option.name && item.key === rs[0])
+          ) {
+            arr.push({
+              key: rs[0],
+              type: Array.isArray(option.treeOptions) ? [] : '',
+              name: option.name,
+              raw: option
+            });
+          }
+        });
+      } else {
+        if (
+          !arr.some(
+            (item) =>
+              item.name === option.name && item.key === option.relationShow[0]
+          )
+        ) {
+          arr.push({
+            key: option.relationShow[0],
+            type: Array.isArray(option.treeOptions) ? [] : '',
+            name: option.name,
+            raw: option
+          });
+        }
+      }
+    });
+  return arr;
+});
 
 relationShowItems.value.forEach((item) => {
   watch(
     () => formState.value[item.key],
     () => {
-      formState.value[item.name] = item.type;
+      const {
+        raw: { defaultValue, inputType, selectMode, name: key }
+      } = item;
+      if (keys.length === 0) {
+        formState.value[key] = null;
+
+        if (inputType === 'radio') {
+          if (defaultValue) {
+            formState.value[key] = defaultValue;
+          } else {
+            formState.value[key] = '0';
+          }
+        }
+
+        // 多选模式下 需要初始化为数组
+        if (selectMode) {
+          formState.value[key] = [];
+        }
+      } else {
+        if (defaultValueKeys.includes(key)) {
+          formState.value[key] = props.defaultValue[key];
+        } else {
+          if (props.defaultValue[key]) {
+            formState.value[key] = props.defaultValue[key];
+          } else {
+            if (defaultValue) {
+              formState.value[key] = defaultValue;
+            } else {
+              defaultState[key] = null;
+
+              if (inputType === 'radio') {
+                defaultState[key] = '0';
+              }
+
+              // 多选模式下 需要初始化为数组
+              if (selectMode) {
+                defaultState[key] = [];
+              }
+            }
+          }
+        }
+      }
     }
   );
 });
