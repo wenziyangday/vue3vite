@@ -44,7 +44,8 @@ const columns = ref<TableColumnsType[]>([
   {
     title: '序号',
     dataIndex: 'index',
-    key: 'index'
+    key: 'index',
+    width: 150
   },
   {
     title: '部门名称',
@@ -69,7 +70,8 @@ const columns = ref<TableColumnsType[]>([
   {
     title: '操作',
     dataIndex: 'action',
-    key: 'action'
+    key: 'action',
+    width: 200
   }
 ]);
 const columnsGetters = computed(() =>
