@@ -9,6 +9,8 @@ export default {
   $getDict: Symbol('getDict'),
   // dict变量
   dictObjs: Symbol('dictObjs'),
+  // iconfont 全局数据
+  icons: Symbol('icons'),
   // 表单校验函数
   $formValidate: Symbol('validate'),
   // 表单重置方法

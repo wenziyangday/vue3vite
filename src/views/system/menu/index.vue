@@ -158,6 +158,8 @@ const defaultOptions: IFormItem[] = [
   {
     label: '菜单图标',
     name: 'icon',
+    inputType: 'select',
+    treeOptions: dictObjs[keyProvide.icons],
     relationShow: [
       ['menuType', 'M'],
       ['menuType', 'C']

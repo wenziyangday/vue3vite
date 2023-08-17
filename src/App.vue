@@ -1,11 +1,27 @@
 <script setup lang="ts">
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import { reactive } from 'vue';
+import { inject, reactive } from 'vue';
 
+import keyProvide from '@/constants/keyProvide';
+import { reg } from '@/constants/rexg';
+import { getIcons } from '@/utils/file';
+
+const dictObjs = inject(keyProvide.dictObjs);
 const data = reactive({
   colorPrimary: '#ff17ef',
   fontSize: 12,
   borderRadius: 4
+});
+
+// 全局icons
+getIcons().then((res) => {
+  dictObjs[keyProvide.icons] = res.data
+    .match(reg)
+    .map((item) => item.replace('id="', '').replace('"', ''))
+    .map((icon) => ({
+      label: icon,
+      value: icon
+    }));
 });
 </script>
 
