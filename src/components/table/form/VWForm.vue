@@ -3,6 +3,7 @@
 import { Form } from 'ant-design-vue';
 import { computed, inject, reactive, ref, watch } from 'vue';
 
+import VWIconFont from '@/components/icon-font/VWIconFont.vue';
 import keyProvide from '@/constants/keyProvide';
 import { type IFormItem } from '@/types/opts';
 
@@ -351,6 +352,7 @@ defineExpose({
           v-if="handelRelationShow && handelRelationShow(option)"
         >
           <a-form-item class="form-item" v-bind="handleBind(option)">
+            <!--提示框-->
             <template #label>
               <a-tooltip v-if="option?.tooltipDesc">
                 <template #title>
@@ -360,6 +362,7 @@ defineExpose({
               </a-tooltip>
               {{ option.label }}
             </template>
+            <!--日期范围选择-->
             <a-range-picker
               v-if="option.inputType === 'dateRangePicker'"
               v-model:value="formState[option.name]"
@@ -367,7 +370,7 @@ defineExpose({
               style="width: 100%"
               allow-clear
             />
-
+            <!--日期选择-->
             <a-date-picker
               v-else-if="option.inputType === 'datePicker'"
               v-model:value="formState[option.name]"
@@ -375,7 +378,7 @@ defineExpose({
               style="width: 100%"
               allow-clear
             />
-
+            <!--树形下拉-->
             <a-tree-select
               v-else-if="option.inputType === 'treeSelect'"
               v-model:value="formState[option.name]"
@@ -387,7 +390,7 @@ defineExpose({
               style="width: 100%"
               allow-clear
             />
-
+            <!--下拉框-->
             <a-select
               v-else-if="option.inputType === 'select'"
               :mode="option.selectMode"
@@ -401,14 +404,37 @@ defineExpose({
               :show-search="false"
               allow-clear
             />
-
+            <!--带图标的select-->
+            <a-select
+              v-else-if="option.inputType === 'selectIcon'"
+              :mode="option.selectMode"
+              :field-names="option.fieldNames"
+              v-model:value="formState[option.name]"
+              :placeholder="`请选择${option.label}`"
+              v-bind="handleDisable(option.disabled)"
+              style="width: 100%"
+              show-arrow
+              :show-search="false"
+              allow-clear
+            >
+              <a-select-option
+                v-for="option in option.treeOptions ??
+                dictObjs[option.selectType]"
+                :value="option.value"
+                :key="option.value"
+              >
+                <v-w-icon-font :type="option.value" />
+                {{ option.label }}
+              </a-select-option>
+            </a-select>
+            <!--单选框-->
             <a-radio-group
               v-else-if="option.inputType === 'radio'"
               v-model:value="formState[option.name]"
               :options="option.treeOptions ?? dictObjs[option.selectType]"
               v-bind="handleDisable(option.disabled)"
             />
-
+            <!--树形check选择-->
             <template v-else-if="option.inputType === 'treeCheck'">
               <a-checkbox-group
                 class="checkbox-margin"
@@ -428,7 +454,7 @@ defineExpose({
                 checkable
               />
             </template>
-
+            <!--文本域-->
             <a-textarea
               v-else-if="option.inputType === 'textarea'"
               v-model:value="formState[option.name]"
@@ -437,7 +463,7 @@ defineExpose({
               style="width: 100%"
               allow-clear
             />
-
+            <!--密码输入-->
             <a-input-password
               v-else-if="option.inputType === 'inputPassword'"
               v-model:value="formState[option.name]"
@@ -447,7 +473,7 @@ defineExpose({
               allow-clear
               autocomplete
             />
-
+            <!--数字输入-->
             <a-input-number
               v-else-if="option.inputType === 'inputNumber'"
               v-model:value="formState[option.name]"
@@ -456,7 +482,7 @@ defineExpose({
               style="width: 100%"
               allow-clear
             />
-
+            <!--普通输入框-->
             <a-input
               v-else
               v-model:value="formState[option.name]"
@@ -492,5 +518,9 @@ defineExpose({
 
 :deep(.anticon) {
   font-size: 8px !important;
+}
+
+:deep(.ant-select-single.ant-select-open .ant-select-selection-item .anticon) {
+  color: rgb(0 0 0 / 25%) !important;
 }
 </style>

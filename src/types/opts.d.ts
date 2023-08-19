@@ -61,6 +61,7 @@ type InputType =
   | 'textarea'
   | 'radio'
   | 'select'
+  | 'selectIcon'
   | 'dateRangePicker'
   | 'datePicker'
   | 'treeSelect'
