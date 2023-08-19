@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import VWIconFont from '@/components/icon-font/VWIconFont.vue';
+
 const props = defineProps<ItemSidebarProps>();
 
 interface ItemSidebarProps {
@@ -32,6 +34,11 @@ const handleCurPath = (route: any): string => {
         v-if="(item.children ?? []).length === 0 || !item.path"
         :key="handleCurPath(item)"
       >
+        <v-w-icon-font
+          v-if="item.meta?.icon"
+          :type="item.meta.icon"
+          font-color="#ffffff"
+        />
         <span v-if="item.path">{{ item?.meta?.title ?? '暂无' }}</span>
         <span v-else>{{ item?.children[0]['meta']['title'] ?? '暂无' }}</span>
       </a-menu-item>
@@ -39,6 +46,11 @@ const handleCurPath = (route: any): string => {
         <a-sub-menu :key="handleCurPath(item.path)">
           <template #title>
             <span>
+              <v-w-icon-font
+                v-if="item.meta?.icon"
+                :type="item.meta.icon"
+                font-color="#ffffff"
+              />
               <span>{{ item?.meta?.title ?? '暂无' }}</span>
             </span>
           </template>
