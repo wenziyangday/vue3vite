@@ -134,6 +134,7 @@ const resetForm = (): void => {
           <a-date-picker
             v-else-if="eInput.inputType === 'datePicker'"
             v-model:value="formState[eInput.name]"
+            :placeholder="`请选择${eInput.label}`"
             style="width: 100%"
             allow-clear
           />
@@ -142,6 +143,7 @@ const resetForm = (): void => {
             v-else-if="eInput.inputType === 'select'"
             :options="dictObjs[eInput.selectType]"
             v-model:value="formState[eInput.name]"
+            :placeholder="`请选择${eInput.label}`"
             style="width: 100%"
             allow-clear
           />
@@ -149,6 +151,7 @@ const resetForm = (): void => {
           <a-input
             v-else
             v-model:value="formState[eInput.name]"
+            :placeholder="`请输入${eInput.label}`"
             style="width: 100%"
             allow-clear
           />
@@ -206,6 +209,7 @@ const resetForm = (): void => {
             <a-date-picker
               v-else-if="foldInput.inputType === 'datePicker'"
               v-model:value="formState[foldInput.name]"
+              :placeholder="`请选择${foldInput.label}`"
               style="width: 100%"
               allow-clear
             />
@@ -214,6 +218,7 @@ const resetForm = (): void => {
               v-else-if="foldInput.inputType === 'select'"
               :options="dictObjs[foldInput.selectType]"
               v-model:value="formState[foldInput.name]"
+              :placeholder="`请选择${foldInput.label}`"
               style="width: 100%"
               allow-clear
             />
@@ -221,6 +226,7 @@ const resetForm = (): void => {
             <a-input
               v-else
               v-model:value="formState[foldInput.name]"
+              :placeholder="`请输入${foldInput.label}`"
               style="width: 100%"
               allow-clear
             />
