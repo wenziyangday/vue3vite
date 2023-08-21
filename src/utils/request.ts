@@ -20,7 +20,7 @@ const service: AxiosInstance = axios.create({
   // base url
   baseURL: import.meta.env.VITE_APP_BASE_API,
   // 超时时间
-  timeout: 1000,
+  timeout: 3000,
   // 跨域 请求时是否需要使用凭证
   withCredentials: true
 });
