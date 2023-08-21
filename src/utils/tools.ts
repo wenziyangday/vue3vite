@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /**
  * 参数处理
  * @param {*} params  参数
@@ -120,4 +122,8 @@ export function handleTree(
   }
 
   return tree;
+}
+
+export function parseTime(date, format: string = 'YYYY-MM-DD'): string {
+  return dayjs(date).format(format);
 }
