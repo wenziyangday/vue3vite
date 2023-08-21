@@ -50,7 +50,7 @@ const useTableRequest = function (
    * */
   const getList = (): void => {
     const {
-      value: { current: pageNum, defaultPageSize: pageSize }
+      value: { current: pageNum, pageSize, defaultPageSize }
     } = paginationIndicator;
     const params = {
       ...formStatus.value,
@@ -59,7 +59,7 @@ const useTableRequest = function (
 
     if (!isNotUsePagination) {
       params.pageNum = pageNum;
-      params.pageSize = pageSize;
+      params.pageSize = pageSize ?? defaultPageSize;
     }
 
     requestCb(params).then((res) => {
