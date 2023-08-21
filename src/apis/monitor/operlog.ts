@@ -5,7 +5,8 @@ export function listLog(query): Promise {
   return request({
     url: '/monitor/operlog/list',
     method: 'get',
-    params: query
+    params: query,
+    isTimeInclude: true
   });
 }
 

@@ -81,12 +81,14 @@ const columns = ref<TableColumnsType[]>([
   {
     title: '操作日期',
     dataIndex: 'operTime',
-    key: 'operTime'
+    key: 'operTime',
+    sorter: (a, b) => a.operTime - b.operTime
   },
   {
     title: '消耗时间',
     dataIndex: 'costTime',
-    key: 'costTime'
+    key: 'costTime',
+    sorter: (a, b) => a.costTime - b.costTime
   },
   {
     title: '操作',
@@ -311,7 +313,10 @@ const handleClean = (): void => {
       <template v-if="column.dataIndex === 'index'">{{ index + 1 }}</template>
       <template v-if="column.dataIndex === 'costTime'">{{ text }}毫秒</template>
       <template v-if="column.dataIndex === 'businessType'">
-        <dict-tag :value="text" :options="dictObjs['sys_oper_type']" />
+        <dict-tag
+          :value="text.toString()"
+          :options="dictObjs['sys_oper_type']"
+        />
       </template>
       <template v-if="column.dataIndex === 'status'">
         <dict-tag
