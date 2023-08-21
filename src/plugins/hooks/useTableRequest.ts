@@ -36,7 +36,10 @@ const useTableRequest = function (
       total: 0
     };
   }
-  const paginationIndicator = ref(defaultPaginationIndicator);
+  const paginationIndicator = ref<Record<string, any>>(
+    defaultPaginationIndicator
+  );
+  const sorterIndicator = ref<Record<string, any>>({});
 
   // 多选处理方法
   const handleChangeSelection = (selectedRowKeys: string | number[]): void => {
@@ -57,9 +60,26 @@ const useTableRequest = function (
       ...defaultParams
     };
 
+    // 页码控制
     if (!isNotUsePagination) {
       params.pageNum = pageNum;
       params.pageSize = pageSize ?? defaultPageSize;
+    }
+
+    // 排序控制
+    if (Object.keys(sorterIndicator.value).length > 0) {
+      const { column, order } = sorterIndicator.value;
+      if (column) {
+        params.orderByColumn = column.dataIndex;
+      } else {
+        delete params.orderByColumn;
+      }
+
+      if (order) {
+        params.isAsc = `${order}ing`;
+      } else {
+        delete params.isAsc;
+      }
     }
 
     requestCb(params).then((res) => {
@@ -74,8 +94,9 @@ const useTableRequest = function (
   };
 
   // 分页控制器处理方法及回调
-  const handleChange = (pagination): void => {
+  const handleChange = (pagination, filters, sorter): void => {
     paginationIndicator.value = pagination;
+    sorterIndicator.value = sorter;
     getList();
   };
 
