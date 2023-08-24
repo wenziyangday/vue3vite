@@ -3,9 +3,6 @@ import { type TableColumnsType } from 'ant-design-vue';
 import { computed, ref } from 'vue';
 
 import {
-  clearCacheAll,
-  clearCacheKey,
-  clearCacheName,
   getCacheValue,
   listCacheKey,
   listCacheName
@@ -76,15 +73,28 @@ const cacheColumnsGetters = computed(() =>
 
 const { dataSource, getList } = useTableRequest(listCacheName, 'data');
 const cacheNames = ref<any[]>([]);
+const cacheContentDefault = ref<any>({});
+const showForm = ref<boolean>(true);
 const handleCustomRow = (record): any => {
   return {
     onClick: () => {
-      const { cacheName } = record;
+      const { cacheName, nowCacheName, originalVal } = record;
       if (cacheName) {
         listCacheKey(cacheName).then((res) => {
           cacheNames.value = res.data.map((data) => ({
-            nowCacheName: data.replace(cacheName, '')
+            nowCacheName: data.replace(cacheName, ''),
+            originalVal: data
           }));
+        });
+      }
+
+      if (nowCacheName && originalVal) {
+        showForm.value = false;
+        getCacheValue(nowCacheName, originalVal).then((res) => {
+          cacheContentDefault.value = res.data;
+          setTimeout(() => {
+            showForm.value = true;
+          }, 0);
         });
       }
     }
@@ -95,17 +105,17 @@ const handleCustomRow = (record): any => {
 const defaultOptions: IFormItem[] = [
   {
     label: '缓存名称',
-    name: 'configName',
+    name: 'cacheName',
     bisection: 1
   },
   {
     label: '缓存键名',
-    name: 'configKey',
+    name: 'cacheKey',
     bisection: 1
   },
   {
     label: '缓存内容',
-    name: 'remark',
+    name: 'cacheValue',
     inputType: 'textarea',
     bisection: 1
   }
@@ -191,7 +201,13 @@ const options = ref<IFormItem[]>(defaultOptions);
           </div>
         </template>
         <div class="container">
-          <v-w-form :label-span="8" :options="options" />
+          <v-w-form
+            v-if="showForm"
+            :label-span="8"
+            :options="options"
+            :default-value="cacheContentDefault"
+            layout="vertical"
+          />
         </div>
       </a-card>
     </a-col>
