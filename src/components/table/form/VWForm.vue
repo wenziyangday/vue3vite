@@ -9,6 +9,8 @@ import { type IFormItem } from '@/types/opts';
 
 const props = withDefaults(
   defineProps<{
+    // 表单结构
+    layout: 'horizontal' | 'vertical' | 'inline';
     // form item labelCol = {span: labelSpan}
     labelSpan?: number;
     // row 几等分
@@ -23,6 +25,7 @@ const props = withDefaults(
     disabled?: boolean;
   }>(),
   {
+    layout: 'horizontal',
     labelSpan: 6,
     bisection: 2,
     disabled: false,
@@ -134,6 +137,10 @@ const handleBind = (option: IFormItem): unknown => {
   } else if (option.bisection) {
     labelSpan = props.labelSpan / props.bisection;
     contentSpan = computed(() => 24 - labelSpan);
+  }
+
+  if (props.layout === 'vertical') {
+    return {};
   }
 
   return {
@@ -343,7 +350,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-form :model="formState">
+  <a-form :model="formState" :layout="layout">
     <a-row :gutter="[16, 16]">
       <template v-for="option in options">
         <a-col
