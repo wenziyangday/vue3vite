@@ -13,11 +13,13 @@ const props = withDefaults(
 const vwEcharts = ref<any>();
 
 onMounted(() => {
-  vwEcharts.value = echarts.init(
-    document.getElementById(props.echartsId),
-    'macarons'
-  );
-  vwEcharts.value?.setOption(props.options);
+  setTimeout(() => {
+    vwEcharts.value = echarts.init(
+      document.getElementById(props.echartsId),
+      'macarons'
+    );
+    vwEcharts.value?.setOption(props.options);
+  }, 0);
 });
 </script>
 
