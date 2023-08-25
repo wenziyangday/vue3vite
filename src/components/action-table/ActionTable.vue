@@ -85,7 +85,7 @@ const handleEmit = (type: string): void => {
       <a-button
         :size="props.btnSize"
         :type="props.btnType"
-        @click="handleEmit(opt.type)"
+        @click.stop="handleEmit(opt.type)"
       >
         <template #icon>
           <component :is="opt.icon"></component>
@@ -106,7 +106,7 @@ const handleEmit = (type: string): void => {
               <a-button
                 size="small"
                 type="link"
-                @click="handleEmit(foldOpt.type)"
+                @click.stop="handleEmit(foldOpt.type)"
               >
                 <template #icon>
                   <component :is="foldOpt.icon"></component>
