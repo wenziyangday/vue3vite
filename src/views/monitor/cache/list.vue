@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { type TableColumnsType } from 'ant-design-vue';
+import { message, type TableColumnsType } from 'ant-design-vue';
 import { computed, ref } from 'vue';
 
 import {
+  clearCacheAll,
+  clearCacheKey,
+  clearCacheName,
   getCacheValue,
   listCacheKey,
   listCacheName
@@ -73,17 +76,24 @@ const cacheColumnsGetters = computed(() =>
 
 const { dataSource, getList } = useTableRequest(listCacheName, 'data');
 const cacheNames = ref<any[]>([]);
+// form的初始化值
 const cacheContentDefault = ref<any>({});
+// 异步更新渲染表单
 const showForm = ref<boolean>(true);
+// 当前选中
+const curRows = ref<any>({});
+// 表格的行操作
 const handleCustomRow = (record): any => {
   return {
     onClick: () => {
       const { cacheName, nowCacheName, originalVal } = record;
       if (cacheName) {
+        curRows.value = record;
         listCacheKey(cacheName).then((res) => {
           cacheNames.value = res.data.map((data) => ({
             nowCacheName: data.replace(cacheName, ''),
-            originalVal: data
+            originalVal: data,
+            cacheKey: cacheName
           }));
         });
       }
@@ -121,6 +131,45 @@ const defaultOptions: IFormItem[] = [
   }
 ];
 const options = ref<IFormItem[]>(defaultOptions);
+
+// 删除列表缓存元素
+const handleClearCacheName = async (record: unknown): void => {
+  await clearCacheName(record.cacheName);
+  await getList();
+};
+
+// 删除键名元素
+const handleClearCacheKey = async (record: unknown): void => {
+  await clearCacheKey(record.originalVal);
+  const { cacheName } = curRows.value;
+  if (cacheName) {
+    handleCustomRow(curRows.value).onClick();
+  }
+};
+
+// 缓存列表刷新
+const handleRefresh = async (): void => {
+  await getList();
+  await message.success('刷新成功');
+};
+
+// 缓存键名刷新
+const handleRefreshKeys = (): void => {
+  if (Object.keys(curRows.value).length === 0) {
+    return;
+  }
+  const { cacheName } = curRows.value;
+  if (cacheName) {
+    handleCustomRow(curRows.value).onClick();
+    void message.success('刷新成功');
+  }
+};
+
+// 清除全部
+const handleClearAll = async (): void => {
+  await clearCacheAll();
+  window.location.href = '/';
+};
 </script>
 
 <template>
@@ -128,9 +177,14 @@ const options = ref<IFormItem[]>(defaultOptions);
     <a-col :span="8">
       <a-card>
         <template #cover>
-          <div class="title">
-            <v-w-icon-font type="CPU" />
-            <span style="margin-left: 10px">缓存列表</span>
+          <div class="wrap-title">
+            <div class="title">
+              <v-w-icon-font type="CPU" />
+              <span style="margin-left: 10px">缓存列表</span>
+            </div>
+            <div class="opt" @click="handleRefresh">
+              <reload-outlined />
+            </div>
           </div>
         </template>
         <div class="container">
@@ -139,9 +193,10 @@ const options = ref<IFormItem[]>(defaultOptions);
             :columns="columnsGetters"
             :data-source="dataSource"
             :pagination="false"
+            :scroll="{ y: 500 }"
             :custom-row="handleCustomRow"
           >
-            <template #bodyCell="{ column, index, text }">
+            <template #bodyCell="{ column, index, text, record }">
               <template v-if="column.dataIndex === 'index'"
                 >{{ index + 1 }}
               </template>
@@ -153,6 +208,11 @@ const options = ref<IFormItem[]>(defaultOptions);
                   btn-size="small"
                   btn-type="link"
                   :options="['delete']"
+                  @click-cb="
+                    () => {
+                      handleClearCacheName(record);
+                    }
+                  "
                 />
               </template>
             </template>
@@ -163,9 +223,14 @@ const options = ref<IFormItem[]>(defaultOptions);
     <a-col :span="8">
       <a-card>
         <template #cover>
-          <div class="title">
-            <v-w-icon-font type="CPU" />
-            <span style="margin-left: 10px">键名列表</span>
+          <div class="wrap-title">
+            <div class="title">
+              <v-w-icon-font type="CPU" />
+              <span style="margin-left: 10px">键名列表</span>
+            </div>
+            <div class="opt" @click="handleRefreshKeys">
+              <reload-outlined />
+            </div>
           </div>
         </template>
         <div class="container">
@@ -174,9 +239,10 @@ const options = ref<IFormItem[]>(defaultOptions);
             :columns="cacheColumnsGetters"
             :data-source="cacheNames"
             :pagination="false"
+            :scroll="{ y: 500 }"
             :custom-row="handleCustomRow"
           >
-            <template #bodyCell="{ column, index }">
+            <template #bodyCell="{ column, index, record }">
               <template v-if="column.dataIndex === 'index'"
                 >{{ index + 1 }}
               </template>
@@ -185,6 +251,11 @@ const options = ref<IFormItem[]>(defaultOptions);
                   btn-size="small"
                   btn-type="link"
                   :options="['delete']"
+                  @click-cb="
+                    () => {
+                      handleClearCacheKey(record);
+                    }
+                  "
                 />
               </template>
             </template>
@@ -195,12 +266,18 @@ const options = ref<IFormItem[]>(defaultOptions);
     <a-col :span="8">
       <a-card>
         <template #cover>
-          <div class="title">
-            <v-w-icon-font type="CPU" />
-            <span style="margin-left: 10px">缓存内容</span>
+          <div class="wrap-title">
+            <div class="title">
+              <v-w-icon-font type="CPU" />
+              <span style="margin-left: 10px">缓存内容</span>
+            </div>
+            <div class="opt" @click="handleClearAll">
+              <reload-outlined />
+              清理全部
+            </div>
           </div>
         </template>
-        <div class="container">
+        <div class="container" style="margin-top: 16px">
           <v-w-form
             v-if="showForm"
             :label-span="8"
@@ -215,21 +292,33 @@ const options = ref<IFormItem[]>(defaultOptions);
 </template>
 
 <style scoped lang="less">
-.title {
+.wrap-title {
   display: flex;
-  min-height: 54px;
   align-items: center;
+  justify-content: space-between;
   padding: 0 24px;
-  margin-bottom: -1px;
-  font-size: 14px;
-  font-weight: 600;
-  color: rgb(0 0 0 / 88%);
-  background: transparent;
   border-bottom: 1px solid #f0f0f0;
-  border-radius: 4px 4px 0 0;
+
+  .title {
+    display: flex;
+    min-height: 54px;
+    align-items: center;
+    margin-bottom: -1px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(0 0 0 / 88%);
+    background: transparent;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .opt {
+    font-size: 12px;
+    color: @blue;
+    cursor: pointer;
+  }
 }
 
 .container {
-  min-height: 76vh;
+  min-height: 70vh;
 }
 </style>
