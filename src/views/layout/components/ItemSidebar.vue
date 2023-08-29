@@ -43,7 +43,7 @@ const handleCurPath = (route: any): string => {
         <span v-else>{{ item?.children[0]['meta']['title'] ?? '暂无' }}</span>
       </a-menu-item>
       <template v-else>
-        <a-sub-menu :key="handleCurPath(item.path)">
+        <a-sub-menu :key="handleCurPath(item)">
           <template #title>
             <span>
               <v-w-icon-font
