@@ -10,7 +10,7 @@ import { type IFormItem } from '@/types/opts';
 const props = withDefaults(
   defineProps<{
     // 表单结构
-    layout: 'horizontal' | 'vertical' | 'inline';
+    layout?: 'horizontal' | 'vertical' | 'inline';
     // form item labelCol = {span: labelSpan}
     labelSpan?: number;
     // row 几等分
