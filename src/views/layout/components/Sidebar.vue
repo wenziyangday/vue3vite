@@ -16,8 +16,10 @@ const openKeys = ref(['/system']);
 /**
  * menu item 点击事件
  * */
-const handleMenuClick = ({ item, key, keyPath }): void => {
-  void router.push(key);
+const handleMenuClick = ({ item }): void => {
+  void router.push({
+    name: item.title
+  });
 };
 </script>
 <template>

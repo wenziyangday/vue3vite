@@ -33,6 +33,7 @@ const handleCurPath = (route: any): string => {
       <a-menu-item
         v-if="(item.children ?? []).length === 0 || !item.path"
         :key="handleCurPath(item)"
+        :title="item.name"
       >
         <v-w-icon-font
           v-if="item.meta?.icon"
