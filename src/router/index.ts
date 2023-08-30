@@ -27,7 +27,8 @@ export const constantRoutes = [
     component: () => import('@/views/layout/layout'),
     hidden: false,
     meta: {
-      title: 'emulate'
+      title: 'emulate',
+      icon: 'date-range'
     },
     children: [
       {
@@ -37,7 +38,19 @@ export const constantRoutes = [
         name: 'Emulate',
         permissions: ['system:role:edit'],
         meta: {
-          title: 'emulate'
+          title: 'emulate',
+          icon: 'date-range'
+        }
+      },
+      {
+        path: 'API',
+        component: () => import('@/views/emulate/api'),
+        hidden: false,
+        name: 'API',
+        permissions: ['system:role:edit'],
+        meta: {
+          icon: 'code',
+          title: 'API'
         }
       }
     ]
