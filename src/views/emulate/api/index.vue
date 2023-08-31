@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 
 import VWComm from '@/views/emulate/api/components/VWComm.vue';
+import VWDirective from '@/views/emulate/api/components/VWDirective.vue';
 import VWLifecycle from '@/views/emulate/api/components/VWLifecycle.vue';
 import VWNotSetup from '@/views/emulate/api/components/VWNotSetup.vue';
 import VWReactive from '@/views/emulate/api/components/VWReactive.vue';
@@ -19,6 +20,11 @@ onMounted(() => {
 </script>
 
 <template>
+  <a-divider orientation="left" :orientation-margin="0">
+    指令：自定义指令、v-memo
+  </a-divider>
+  <v-w-directive />
+
   <a-divider orientation="left" :orientation-margin="0">
     组件通信：defineExpose、provide、inject、defineEmits、defineProps
   </a-divider>

@@ -19,5 +19,8 @@ export default {
         }, 1000);
       });
     });
+    app.directive('hasPermission', function (el, binding) {
+      console.log(el, binding, 'jkjjkj');
+    });
   }
 };

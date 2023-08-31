@@ -8,6 +8,7 @@ import axios, {
 import { saveAs } from 'file-saver';
 
 import constants from '@/constants/constants';
+import { useUser } from '@/stores/user';
 import errorCode from '@/utils/errorCode';
 import { getSItem, setSItem } from '@/utils/storeage';
 import { getToken } from '@/utils/token';
@@ -130,8 +131,8 @@ service.interceptors.response.use(
     }
 
     if (code === 401) {
-      if (!isReLogin.show) {
-        isReLogin.show = true;
+      if (isReLogin.show) {
+        isReLogin.show = false;
 
         Modal.confirm({
           title: '系统提示',
@@ -140,10 +141,11 @@ service.interceptors.response.use(
           okText: '确定',
           centered: true,
           onOk() {
-            isReLogin.show = false;
-            // store.dispatch('LogOut').then(() => {
-            //   location.href = '/index';
-            // });
+            isReLogin.show = true;
+            const user = useUser();
+            void user.logoutACT().then(() => {
+              location.href = '/index';
+            });
           },
           onCancel() {
             isReLogin.show = false;
@@ -181,7 +183,7 @@ service.interceptors.response.use(
     } else if (msg.includes('timeout')) {
       msg = '系统接口请求超时';
     } else if (msg.includes('Request failed with status code')) {
-      msg = '系统接口' + msg.substr(msg.length - 3) + '异常';
+      msg = '系统接口' + msg.substring(msg.length - 3) + '异常';
     }
     void message.error(msg);
     return Promise.reject(error);
