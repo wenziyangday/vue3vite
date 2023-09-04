@@ -16,6 +16,7 @@ import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IOptSearch } from '@/types/opts';
+import { solveTableIndex } from '@/utils/tools';
 
 /**
  * 全局获取字典值
@@ -219,7 +220,9 @@ const handleActionsTable = (type: string, record?: unknown): void => {
     @change="handleChange"
   >
     <template #bodyCell="{ column, index, text, record }">
-      <template v-if="column.dataIndex === 'index'">{{ index + 1 }}</template>
+      <template v-if="column.dataIndex === 'index'">{{
+        solveTableIndex(index, paginationIndicator)
+      }}</template>
       <template v-if="column.dataIndex === 'noticeType'">
         <dict-tag :value="text" :options="dictObjs['sys_notice_type']" />
       </template>

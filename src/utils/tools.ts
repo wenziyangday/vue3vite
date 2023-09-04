@@ -127,3 +127,23 @@ export function handleTree(
 export function parseTime(date, format: string = 'YYYY-MM-DD'): string {
   return dayjs(date).format(format);
 }
+
+/**
+ * 表格table的Index
+ * */
+export function solveTableIndex(
+  curIndex: number,
+  paginationIndicator: {
+    pageSize: number;
+    current: number;
+    defaultPageSize: number;
+  }
+): number {
+  const { pageSize, current, defaultPageSize } = paginationIndicator;
+  let ps = defaultPageSize;
+  if (pageSize) {
+    ps = pageSize;
+  }
+
+  return (current - 1) * ps + curIndex + 1;
+}

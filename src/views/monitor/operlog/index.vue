@@ -12,6 +12,7 @@ import Search from '@/components/table/search/Search.vue';
 import keyProvide from '@/constants/keyProvide';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IFormItem, type IOptSearch, type OptType } from '@/types/opts';
+import { solveTableIndex } from '@/utils/tools';
 
 /**
  * 全局方法使用
@@ -310,7 +311,9 @@ const handleClean = (): void => {
     @change="handleChange"
   >
     <template #bodyCell="{ column, index, text, record }">
-      <template v-if="column.dataIndex === 'index'">{{ index + 1 }}</template>
+      <template v-if="column.dataIndex === 'index'"
+        >{{ solveTableIndex(index, paginationIndicator) }}
+      </template>
       <template v-if="column.dataIndex === 'costTime'">{{ text }}毫秒</template>
       <template v-if="column.dataIndex === 'businessType'">
         <dict-tag

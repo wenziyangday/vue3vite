@@ -35,6 +35,7 @@ import keyProvide from '@/constants/keyProvide';
 import useImport from '@/plugins/hooks/useImport';
 import useTableRequest from '@/plugins/hooks/useTableRequest';
 import { type IFormItem, type IOptSearch, type OptType } from '@/types/opts';
+import { solveTableIndex } from '@/utils/tools';
 
 /**
  * 全局方法使用
@@ -511,7 +512,7 @@ onMounted(() => {
       >
         <template #bodyCell="{ column, index, text, record }">
           <template v-if="column.dataIndex === 'index'"
-            >{{ index + 1 }}
+            >{{ solveTableIndex(index, paginationIndicator) }}
           </template>
           <template v-if="column.dataIndex === 'status'">
             <dict-tag :value="text" :options="dictObjs['sys_normal_disable']" />
