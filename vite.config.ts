@@ -43,6 +43,14 @@ export default ({ mode }): any => {
         ]
       }
     },
+    // webpack配置
+    configureWebpack: {
+      // 地图插件
+      // externals: {
+      //   AMap: 'AMap',
+      //   AMapUI: 'AMapUI'
+      // }
+    },
     plugins: [
       vue(),
       eslintPlugin({

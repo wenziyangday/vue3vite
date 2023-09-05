@@ -147,3 +147,24 @@ export function solveTableIndex(
 
   return (current - 1) * ps + curIndex + 1;
 }
+
+export function aMapLoader(): Promise {
+  return new Promise((resolve, reject) => {
+    if (window.AMap) {
+      resolve(window.AMap);
+    } else {
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src =
+        // 'https://webapi.amap.com/maps?v=1.4.14&callback=initAMap&key=';
+        'https://webapi.amap.com/maps?v=2.0&callback=initAMap&key=d416a40efc4f82e0be7abad5e853de59';
+      script.onerror = reject;
+      document.head.appendChild(script);
+    }
+
+    window.initAMap = () => {
+      resolve(window.AMap);
+    };
+  });
+}

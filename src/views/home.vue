@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useMap from '@/components/map/useMap';
+
 const dataSource = [
   {
     key: '1',
@@ -30,29 +32,37 @@ const columns = [
     key: 'address'
   }
 ];
+const { mapRef } = useMap('map', (AMap) => {
+  const marker = new AMap.Marker({
+    icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png',
+    position: [116.405467, 39.907761],
+    anchor: 'bottom-center'
+  });
+  mapRef.value.add(marker);
+  mapRef.value.setFitView();
+});
+const handleMap = (): void => {
+  console.log(mapRef.value, 'mapref');
+};
 </script>
 
 <template>
   <div class="home">
-    <div class="font">这是一个首页</div>
-    <a-button type="primary">点击</a-button>
     <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
-    <a-table :dataSource="dataSource" :columns="columns" />
+    <a-button @click="handleMap">点击添加地图</a-button>
+    <div class="map-container" id="map"></div>
   </div>
 </template>
 
 <style scoped lang="less">
 .home {
-  background: blanchedalmond;
-  //color: @blue-2;
-  //font-size: @fontSizeLG;
+  font-size: @fontSizeLG;
+  color: @blue-2;
+}
+
+.map-container {
+  width: 800px;
+  height: 800px;
+  background: @blue;
 }
 </style>
