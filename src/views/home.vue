@@ -51,6 +51,7 @@ const handleMap = (): void => {
     <a-table :dataSource="dataSource" :columns="columns" />
     <a-button @click="handleMap">点击添加地图</a-button>
     <div class="map-container" id="map"></div>
+    <div class="map-container" id="map2"></div>
   </div>
 </template>
 
@@ -63,6 +64,7 @@ const handleMap = (): void => {
 .map-container {
   width: 800px;
   height: 800px;
+  margin-bottom: 20px;
   background: @blue;
 }
 </style>

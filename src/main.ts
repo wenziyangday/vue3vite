@@ -1,7 +1,7 @@
 import 'ant-design-vue/dist/reset.css';
 import '@/permission';
-import 'default-passive-events';
 
+// import 'default-passive-events';
 import * as Icons from '@ant-design/icons-vue';
 import Antd from 'ant-design-vue';
 import { createApp } from 'vue';

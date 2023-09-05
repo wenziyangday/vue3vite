@@ -22,7 +22,7 @@ const openKeys = ref(['/system']);
 //   });
 // };
 
-const handleMenuClick = ({ item, key, keyPath }): void => {
+const handleMenuClick = ({ key }): void => {
   void router.push(key);
 };
 </script>

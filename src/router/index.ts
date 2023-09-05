@@ -64,6 +64,15 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/map',
+    name: 'Map',
+    component: () => import('@/views/map'),
+    meta: {
+      title: '地图'
+    },
+    hidden: true
+  },
+  {
     path: '/403',
     component: () => import('@/views/error/403'),
     meta: {
