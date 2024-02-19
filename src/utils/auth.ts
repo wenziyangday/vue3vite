@@ -4,7 +4,7 @@ import { useUser } from '@/stores/user';
 const user = useUser(store);
 const permissionInfo = user.permissions;
 
-function authPermission(permission): boolean {
+function authPermission(permission: string): boolean {
   const allPermission = '*:*:*';
   if (permission && permission.length > 0) {
     return permissionInfo.some((v) => {

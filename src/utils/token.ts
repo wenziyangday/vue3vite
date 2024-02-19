@@ -12,7 +12,7 @@ export const getToken = (): string => {
   return getItem(constants.token);
 };
 
-export const setToken = (val: string): string => {
+export const setToken = (val: string): void => {
   setItem(constants.token, val);
 };
 
@@ -24,7 +24,7 @@ export const getSToken = (): string => {
   return getSItem(constants.token);
 };
 
-export const setSToken = (val: string): string => {
+export const setSToken = (val: string): void => {
   setSItem(constants.token, val);
 };
 
