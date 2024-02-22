@@ -1,6 +1,6 @@
 <!--字典数据标签处理（枚举数据标签处理）-->
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, type ComputedRef, ref } from 'vue';
 
 import { type IDict } from '@/types/dicts';
 import { colorListClass } from '@/utils/tools';
@@ -16,7 +16,7 @@ const props = defineProps<IDictTag>();
 /**
  * 处理values
  * */
-const values: unknown[] = computed(() => {
+const values: ComputedRef<any[]> = computed(() => {
   if (props.value && typeof props.value !== 'undefined') {
     return Array.isArray(props.value) ? props.value : [String(props.value)];
   }
@@ -27,20 +27,20 @@ const values: unknown[] = computed(() => {
 /**
  * 存在在已有元素中的元素
  * */
-const optionsFilter: IDict[] = computed(
-  () => props.options?.filter((option) => values.value.includes(option.value))
+const optionsFilter: ComputedRef<any> = computed(() =>
+  props.options?.filter((option) => values.value.includes(option.value))
 );
 
 /**
  * 未匹配的标签数据
  * */
 const unMatchedArray = ref<any[]>([]);
-const handleUnMatchedArray: string = computed(() => '暂时');
+const handleUnMatchedArray: ComputedRef<string> = computed(() => '暂时');
 
 /**
  * 未匹配数据
  * */
-const unMatched: boolean = () => {
+const unMatched: () => boolean = () => {
   // 重置
   unMatchedArray.value = [];
   if (props.value && typeof props.value !== 'undefined') {
@@ -54,6 +54,11 @@ const unMatched: boolean = () => {
   }
   return false;
 };
+
+/**
+ * 做一次中转，不希望直接在template上使用函数计算，这样会在渲染的时候重复渲染
+ * */
+const unMatchedVal: ComputedRef<boolean> = computed(() => unMatched());
 </script>
 
 <template>
@@ -72,7 +77,7 @@ const unMatched: boolean = () => {
       >{{ option.label }}
     </a-tag>
   </template>
-  <template v-if="unMatched && showValue">
+  <template v-if="unMatchedVal">
     {{ handleUnMatchedArray }}
   </template>
 </template>

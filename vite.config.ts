@@ -1,6 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import { theme } from 'ant-design-vue';
-import path from 'path';
+import * as path from 'path';
 import postCssPxToViewport from 'postcss-px-to-viewport-8-plugin';
 import { defineConfig, loadEnv } from 'vite';
 import eslintPlugin from 'vite-plugin-eslint';
@@ -9,10 +9,19 @@ import eslintPlugin from 'vite-plugin-eslint';
 const { defaultAlgorithm, defaultSeed } = theme;
 const mapToken = defaultAlgorithm(defaultSeed);
 // https://vitejs.dev/config/
+
 export default ({ mode }): any => {
   // 参数mode为开放模式或生产模式
   const env = loadEnv(mode, process.cwd()); // 获取.env文件里定义的环境变量
   const port = env.port ?? env.npm_config_port ?? 9527;
+  // 使用字面量绕过检查
+  const proxyObj = {
+    target: env.VITE_APP_API,
+    changeOrigin: true,
+    pathRewrite: {
+      [`^${env.VITE_APP_BASE_API}`]: ''
+    }
+  };
   return defineConfig({
     // 项目部署在主域名的子文件使用,例如http://localhost:3000/myvite/。不填默认就是/
     base: env.VITE_APP_BASE_URL ?? '/',
@@ -44,13 +53,13 @@ export default ({ mode }): any => {
       }
     },
     // webpack配置
-    configureWebpack: {
-      // 地图插件
-      // externals: {
-      //   AMap: 'AMap',
-      //   AMapUI: 'AMapUI'
-      // }
-    },
+    // configureWebpack: {
+    //   // 地图插件
+    //   // externals: {
+    //   //   AMap: 'AMap',
+    //   //   AMapUI: 'AMapUI'
+    //   // }
+    // },
     plugins: [
       vue(),
       eslintPlugin({
@@ -88,16 +97,10 @@ export default ({ mode }): any => {
     },
     server: {
       host: '0.0.0.0',
-      port,
+      port: port as number,
       open: true,
       proxy: {
-        [env.VITE_APP_PROXY_API]: {
-          target: env.VITE_APP_API,
-          changeOrigin: true,
-          pathRewrite: {
-            [`^${env.VITE_APP_BASE_API}`]: ''
-          }
-        }
+        [env.VITE_APP_PROXY_API]: proxyObj
       }
     }
   });
